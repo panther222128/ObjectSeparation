@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:../../Research/ObjectSeparation/ObjectSeparation.xcodeproj">
+      location = "group:ObjectSeparation/ObjectSeparation.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:../../Research/ObjectSeparated/ObjectSeparated.xcodeproj">
+      location = "group:ObjectSeparated/ObjectSeparated.xcodeproj">
    </FileRef>
 </Workspace>
