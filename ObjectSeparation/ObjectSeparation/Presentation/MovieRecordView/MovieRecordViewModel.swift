@@ -8,9 +8,9 @@
 import AVFoundation
 
 protocol MovieRecordViewModel {
-    func setupSession(with layer: AVCaptureVideoPreviewLayer)
-    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer)
-    func configureMicrophone(with dataOutputQueue: DispatchQueue)
+    func setupSession(with layer: AVCaptureVideoPreviewLayer, on sessionQueue: DispatchQueue)
+    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue)
+    func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue)
 }
 
 final class DefaultMovieRecordViewModel: MovieRecordViewModel {
@@ -21,16 +21,16 @@ final class DefaultMovieRecordViewModel: MovieRecordViewModel {
         self.movieRecordUseCase = movieRecordUseCase
     }
     
-    func setupSession(with layer: AVCaptureVideoPreviewLayer) {
-        movieRecordUseCase.setupSession(with: layer)
+    func setupSession(with layer: AVCaptureVideoPreviewLayer, on sessionQueue: DispatchQueue) {
+        movieRecordUseCase.setupSession(with: layer, on: sessionQueue)
     }
     
-    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer) {
-        movieRecordUseCase.configureCamera(with: dataOutputQueue, videoPreviewLayer: videoPreviewLayer)
+    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue) {
+        movieRecordUseCase.configureCamera(with: dataOutputQueue, videoPreviewLayer: videoPreviewLayer, sessionQueue: sessionQueue)
     }
     
-    func configureMicrophone(with dataOutputQueue: DispatchQueue) {
-        movieRecordUseCase.configureMicrophone(with: dataOutputQueue)
+    func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue) {
+        movieRecordUseCase.configureMicrophone(with: dataOutputQueue, sessionQueue: sessionQueue)
     }
     
 }

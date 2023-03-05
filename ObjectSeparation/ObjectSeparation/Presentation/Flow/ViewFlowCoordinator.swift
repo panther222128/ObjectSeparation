@@ -32,7 +32,7 @@ final class ViewFlowCoordinator {
         let movieRecordViewController = dependencies.makeMovieRecordViewController()
         self.movieRecordViewController = movieRecordViewController
         
-        let mainTabBarItem = UITabBarItem(title: "", image: Constants.TabBarImage.asset, tag: 0)
+        let mainTabBarItem = UITabBarItem(title: "", image: Constants.TabBarImage.selectedAsset, tag: 0)
         
         movieRecordViewController.tabBarItem = mainTabBarItem
         

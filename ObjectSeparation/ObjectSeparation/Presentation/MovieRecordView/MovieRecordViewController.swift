@@ -37,9 +37,9 @@ class MovieRecordViewController: UIViewController {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
             DispatchQueue.main.async {
-                self.viewModel.setupSession(with: self.videoPreviewView.videoPreviewLayer)
-                self.viewModel.configureCamera(with: self.dataOutputQueue, videoPreviewLayer: self.videoPreviewView.videoPreviewLayer)
-                self.viewModel.configureMicrophone(with: self.dataOutputQueue)
+                self.viewModel.setupSession(with: self.videoPreviewView.videoPreviewLayer, on: self.sessionQueue)
+                self.viewModel.configureCamera(with: self.dataOutputQueue, videoPreviewLayer: self.videoPreviewView.videoPreviewLayer, sessionQueue: self.sessionQueue)
+                self.viewModel.configureMicrophone(with: self.dataOutputQueue, sessionQueue: self.sessionQueue)
             }
             
         case .denied:
@@ -50,9 +50,10 @@ class MovieRecordViewController: UIViewController {
                 if isAuthorized {
                     DispatchQueue.main.async {
                         guard let dataOutputQueue = self?.dataOutputQueue else { return }
-                        self?.viewModel.setupSession(with: self?.videoPreviewView.videoPreviewLayer ?? AVCaptureVideoPreviewLayer())
-                        self?.viewModel.configureCamera(with: dataOutputQueue, videoPreviewLayer: self?.videoPreviewView.videoPreviewLayer ?? AVCaptureVideoPreviewLayer())
-                        self?.viewModel.configureMicrophone(with: dataOutputQueue)
+                        guard let sessionQueue = self?.sessionQueue else { return }
+                        self?.viewModel.setupSession(with: self?.videoPreviewView.videoPreviewLayer ?? AVCaptureVideoPreviewLayer(), on: sessionQueue)
+                        self?.viewModel.configureCamera(with: dataOutputQueue, videoPreviewLayer: self?.videoPreviewView.videoPreviewLayer ?? AVCaptureVideoPreviewLayer(), sessionQueue: sessionQueue)
+                        self?.viewModel.configureMicrophone(with: dataOutputQueue, sessionQueue: sessionQueue)
                     }
                 } else {
                     return

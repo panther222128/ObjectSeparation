@@ -15,16 +15,16 @@ final class DefaultMovieRecordRepository: MovieRecordRepository {
         self.studio = studio
     }
     
-    func setupSession(with layer: AVCaptureVideoPreviewLayer) {
-        studio.setupSession(with: layer)
+    func setupSession(with layer: AVCaptureVideoPreviewLayer, on sessionQueue: DispatchQueue) {
+        studio.setupSession(with: layer, on: sessionQueue)
     }
     
-    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer) {
-        studio.configureCamera(with: dataOutputQueue, videoPreviewLayer: videoPreviewLayer)
+    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue) {
+        studio.configureCamera(with: dataOutputQueue, videoPreviewLayer: videoPreviewLayer, sessionQueue: sessionQueue)
     }
     
-    func configureMicrophone(with dataOutputQueue: DispatchQueue) {
-        studio.configureMicrophone(with: dataOutputQueue)
+    func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue) {
+        studio.configureMicrophone(with: dataOutputQueue, sessionQueue: sessionQueue)
     }
     
 }
