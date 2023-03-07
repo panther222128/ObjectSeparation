@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -18,7 +19,21 @@
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jzd-CQ-8Zc" customClass="PreviewView" customModule="ObjectSeparation" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gc7-QI-Ytk">
+                                        <rect key="frame" x="159" y="697" width="75" height="35"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                                        <connections>
+                                            <action selector="recordButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tst-Gg-aJk"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="gc7-QI-Ytk" firstAttribute="centerX" secondItem="Jzd-CQ-8Zc" secondAttribute="centerX" id="b2d-mO-URc"/>
+                                    <constraint firstAttribute="bottom" secondItem="gc7-QI-Ytk" secondAttribute="bottom" constant="120" id="iDr-IO-ob7"/>
+                                </constraints>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -31,6 +46,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="recordButton" destination="gc7-QI-Ytk" id="AgV-uG-7Pj"/>
                         <outlet property="videoPreviewView" destination="Jzd-CQ-8Zc" id="f5n-vC-HP2"/>
                     </connections>
                 </viewController>

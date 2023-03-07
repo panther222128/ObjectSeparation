@@ -55,7 +55,7 @@ enum PhotoLibraryError: Error {
 }
 
 protocol StudioConfigurable {
-    func setupSession(with layer: AVCaptureVideoPreviewLayer, on sessionQueue: DispatchQueue)
+    func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer)
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue)
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue)
 }
@@ -97,11 +97,11 @@ final class DefaultStudio: NSObject, StudioConfigurable {
         self.backgroundRecordingID = nil
     }
     
-    func setupSession(with layer: AVCaptureVideoPreviewLayer, on sessionQueue: DispatchQueue) {
+    func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer) {
         sessionQueue.async {
             do {
                 try self.instantiateCaptureSession()
-                try self.setSession(to: layer)
+                try self.setupSession(with: layer)
             } catch {
                 
             }
@@ -174,12 +174,11 @@ final class DefaultStudio: NSObject, StudioConfigurable {
 extension DefaultStudio {
     private func instantiateCaptureSession() throws {
         captureSession = AVCaptureSession()
-        guard let captureSession = captureSession else { throw StudioError.captureSessionInstantiate }
-        captureSession.startRunning()
     }
     
-    private func setSession(to layer: AVCaptureVideoPreviewLayer) throws {
+    private func setupSession(with layer: AVCaptureVideoPreviewLayer) throws {
         guard let captureSession = captureSession else { throw StudioError.captureSessionInstantiate }
+        captureSession.startRunning()
         layer.setSessionWithNoConnection(captureSession)
     }
 }

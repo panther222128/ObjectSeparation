@@ -15,8 +15,8 @@ final class DefaultMovieRecordRepository: MovieRecordRepository {
         self.studio = studio
     }
     
-    func setupSession(with layer: AVCaptureVideoPreviewLayer, on sessionQueue: DispatchQueue) {
-        studio.setupSession(with: layer, on: sessionQueue)
+    func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer) {
+        studio.startSession(on: sessionQueue, with: layer)
     }
     
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue) {

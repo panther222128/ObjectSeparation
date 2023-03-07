@@ -12,6 +12,7 @@ import Photos
 class MovieRecordViewController: UIViewController {
     
     @IBOutlet weak var videoPreviewView: PreviewView!
+    @IBOutlet weak var recordButton: UIButton!
     
     static let storyboardName = "MovieRecordViewController"
     static let storyboardID = "MovieRecordViewController"
@@ -37,7 +38,7 @@ class MovieRecordViewController: UIViewController {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
             DispatchQueue.main.async {
-                self.viewModel.setupSession(with: self.videoPreviewView.videoPreviewLayer, on: self.sessionQueue)
+                self.viewModel.startSession(on: self.sessionQueue, with: self.videoPreviewView.videoPreviewLayer)
                 self.viewModel.configureCamera(with: self.dataOutputQueue, videoPreviewLayer: self.videoPreviewView.videoPreviewLayer, sessionQueue: self.sessionQueue)
                 self.viewModel.configureMicrophone(with: self.dataOutputQueue, sessionQueue: self.sessionQueue)
             }
@@ -51,7 +52,7 @@ class MovieRecordViewController: UIViewController {
                     DispatchQueue.main.async {
                         guard let dataOutputQueue = self?.dataOutputQueue else { return }
                         guard let sessionQueue = self?.sessionQueue else { return }
-                        self?.viewModel.setupSession(with: self?.videoPreviewView.videoPreviewLayer ?? AVCaptureVideoPreviewLayer(), on: sessionQueue)
+                        self?.viewModel.startSession(on: sessionQueue, with: self?.videoPreviewView.videoPreviewLayer ?? AVCaptureVideoPreviewLayer())
                         self?.viewModel.configureCamera(with: dataOutputQueue, videoPreviewLayer: self?.videoPreviewView.videoPreviewLayer ?? AVCaptureVideoPreviewLayer(), sessionQueue: sessionQueue)
                         self?.viewModel.configureMicrophone(with: dataOutputQueue, sessionQueue: sessionQueue)
                     }
@@ -76,6 +77,9 @@ class MovieRecordViewController: UIViewController {
             }
         }
     }
-
+    
+    @IBAction func recordButtonAction(_ sender: Any) {
+    }
+    
 }
 

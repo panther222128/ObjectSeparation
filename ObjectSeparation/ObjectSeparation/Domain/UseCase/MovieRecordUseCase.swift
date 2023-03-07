@@ -8,7 +8,7 @@
 import AVFoundation
 
 protocol MovieRecordUseCase {
-    func setupSession(with layer: AVCaptureVideoPreviewLayer, on sessionQueue: DispatchQueue)
+    func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer)
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue)
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue)
 }
@@ -21,8 +21,8 @@ final class DefaultMovieRecordUseCase: MovieRecordUseCase {
         self.movieRecordRepository = movieRecordRepository
     }
     
-    func setupSession(with layer: AVCaptureVideoPreviewLayer, on sessionQueue: DispatchQueue) {
-        movieRecordRepository.setupSession(with: layer, on: sessionQueue)
+    func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer) {
+        movieRecordRepository.startSession(on: sessionQueue, with: layer)
     }
     
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue) {
