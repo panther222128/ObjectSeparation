@@ -84,6 +84,7 @@
 		A913932729B328E60023A151 /* ObjectSeparation */ = {
 			isa = PBXGroup;
 			children = (
+				A9749BB929C75476002E0DD4 /* Utilities */,
 				A9749B8529C72775002E0DD4 /* Constants */,
 				A913936129B32C5F0023A151 /* Resources */,
 				A913936029B32C540023A151 /* Application */,
@@ -91,7 +92,6 @@
 				A913935E29B32C450023A151 /* Data */,
 				A913935D29B32C3F0023A151 /* Domain */,
 				A913935C29B32C360023A151 /* Presentation */,
-				A913938129B33EE20023A151 /* Utilities.swift */,
 			);
 			path = ObjectSeparation;
 			sourceTree = "<group>";
@@ -219,6 +219,14 @@
 				A913937129B32E690023A151 /* Constants.swift */,
 			);
 			path = Constants;
+			sourceTree = "<group>";
+		};
+		A9749BB929C75476002E0DD4 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				A913938129B33EE20023A151 /* Utilities.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
