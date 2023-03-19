@@ -16,7 +16,7 @@ final class DefaultMovieRecordRepository: MovieRecordRepository {
     }
     
     func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void) {
-        studio.startSession(on: sessionQueue, with: layer) { result in
+        studio.startCaptureSession(on: sessionQueue, with: layer) { result in
             switch result {
             case .success(let isSuccess):
                 completion(.success(isSuccess))
