@@ -58,6 +58,8 @@ protocol StudioConfigurable {
     func startCaptureSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
+    func startRecording(completion: @escaping (Result<Bool, Error>) -> Void)
+    func stopRecording(completion: @escaping (Result<URL, Error>) -> Void)
 }
 
 final class DefaultStudio: NSObject, StudioConfigurable {
@@ -411,7 +413,7 @@ extension DefaultStudio {
 
 // MARK: - Asset writer
 extension DefaultStudio {
-    func startRecord() throws {
+    private func startRecord() throws {
         let outputFileName = NSUUID().uuidString
         let outputFileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(outputFileName).appendingPathExtension("MOV")
         guard let assetWriter = try? AVAssetWriter(url: outputFileURL, fileType: .mov) else { throw AssetWriterError.assetWriterInstantiate }
@@ -433,7 +435,7 @@ extension DefaultStudio {
         isRecording = true
     }
     
-    func stopRecord(completion: @escaping (URL) -> Void) throws {
+    private func stopRecord(completion: @escaping (URL) -> Void) throws {
         guard let assetWriter = assetWriter else { throw AssetWriterError.cannotFindAssetWriter }
         
         self.isRecording = false
