@@ -8,7 +8,7 @@
 import AVFoundation
 
 protocol MovieRecordRepository {
-    func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer)
-    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue)
-    func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue)
+    func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void)
+    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
+    func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
 }

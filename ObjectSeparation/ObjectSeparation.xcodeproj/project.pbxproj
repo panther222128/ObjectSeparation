@@ -26,6 +26,7 @@
 		A913937E29B32F890023A151 /* Studio.swift in Sources */ = {isa = PBXBuildFile; fileRef = A913937D29B32F890023A151 /* Studio.swift */; };
 		A913938029B335440023A151 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A913937F29B335440023A151 /* PreviewView.swift */; };
 		A913938229B33EE20023A151 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A913938129B33EE20023A151 /* Utilities.swift */; };
+		A9749B8429C71C70002E0DD4 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9749B8329C71C70002E0DD4 /* RecordButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		A913937D29B32F890023A151 /* Studio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Studio.swift; sourceTree = "<group>"; };
 		A913937F29B335440023A151 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		A913938129B33EE20023A151 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		A9749B8329C71C70002E0DD4 /* RecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,7 +84,7 @@
 		A913932729B328E60023A151 /* ObjectSeparation */ = {
 			isa = PBXGroup;
 			children = (
-				A913937129B32E690023A151 /* Constants.swift */,
+				A9749B8529C72775002E0DD4 /* Constants */,
 				A913936129B32C5F0023A151 /* Resources */,
 				A913936029B32C540023A151 /* Application */,
 				A913935F29B32C4B0023A151 /* Infrastructure */,
@@ -206,8 +208,17 @@
 				A913932C29B328E60023A151 /* MovieRecordViewController.swift */,
 				A913937329B32EB30023A151 /* MovieRecordViewModel.swift */,
 				A913937F29B335440023A151 /* PreviewView.swift */,
+				A9749B8329C71C70002E0DD4 /* RecordButton.swift */,
 			);
 			path = MovieRecordView;
+			sourceTree = "<group>";
+		};
+		A9749B8529C72775002E0DD4 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				A913937129B32E690023A151 /* Constants.swift */,
+			);
+			path = Constants;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -292,6 +303,7 @@
 				A913932929B328E60023A151 /* AppDelegate.swift in Sources */,
 				A913936D29B32CF00023A151 /* ViewFlowCoordinator.swift in Sources */,
 				A913936629B32CC20023A151 /* SceneDIContainer.swift in Sources */,
+				A9749B8429C71C70002E0DD4 /* RecordButton.swift in Sources */,
 				A913936829B32CD00023A151 /* AppFlowCoordinator.swift in Sources */,
 				A913936A29B32CDD0023A151 /* AppConfiguration.swift in Sources */,
 				A913937829B32F450023A151 /* MovieRecordUseCase.swift in Sources */,

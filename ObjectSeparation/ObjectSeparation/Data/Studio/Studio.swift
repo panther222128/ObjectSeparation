@@ -55,9 +55,9 @@ enum PhotoLibraryError: Error {
 }
 
 protocol StudioConfigurable {
-    func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer)
-    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue)
-    func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue)
+    func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void)
+    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
+    func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
 }
 
 final class DefaultStudio: NSObject, StudioConfigurable {
@@ -97,18 +97,19 @@ final class DefaultStudio: NSObject, StudioConfigurable {
         self.backgroundRecordingID = nil
     }
     
-    func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer) {
+    func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void) {
         sessionQueue.async {
             do {
                 try self.instantiateCaptureSession()
                 try self.setupSession(with: layer)
-            } catch {
-                
+                completion(.success(true))
+            } catch let error {
+                completion(.failure(error))
             }
         }
     }
     
-    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue) {
+    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
         sessionQueue.async {
             guard let captureSession = self.captureSession else { return }
             captureSession.beginConfiguration()
@@ -122,13 +123,14 @@ final class DefaultStudio: NSObject, StudioConfigurable {
                 try self.setVideoSampleBufferDelegate(on: dataOutputQueue)
                 try self.addVideoConnection()
                 try self.addConnection(to: videoPreviewLayer)
-            } catch {
-                
+                completion(.success(true))
+            } catch let error {
+                completion(.failure(error))
             }
         }
     }
     
-    func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue) {
+    func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
         sessionQueue.async {
             guard let captureSession = self.captureSession else { return }
             captureSession.beginConfiguration()
@@ -147,24 +149,25 @@ final class DefaultStudio: NSObject, StudioConfigurable {
         }
     }
     
-    func startRecording() {
+    func startRecording(completion: @escaping (Result<Bool, Error>) -> Void) {
         do {
             try createVideoSettings()
             try createAudioSettings()
             try createVideoTransform()
             try startRecord()
-        } catch {
-            
+            completion(.success(true))
+        } catch let error {
+            completion(.failure(error))
         }
     }
     
-    func stopRecording(completion: @escaping (URL) -> Void) {
+    func stopRecording(completion: @escaping (Result<URL, Error>) -> Void) {
         do {
             try stopRecord { url in
-                completion(url)
+                completion(.success(url))
             }
-        } catch {
-            
+        } catch let error {
+            completion(.failure(error))
         }
     }
     

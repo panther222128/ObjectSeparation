@@ -15,16 +15,37 @@ final class DefaultMovieRecordRepository: MovieRecordRepository {
         self.studio = studio
     }
     
-    func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer) {
-        studio.startSession(on: sessionQueue, with: layer)
+    func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void) {
+        studio.startSession(on: sessionQueue, with: layer) { result in
+            switch result {
+            case .success(let isSuccess):
+                completion(.success(isSuccess))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
     
-    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue) {
-        studio.configureCamera(with: dataOutputQueue, videoPreviewLayer: videoPreviewLayer, sessionQueue: sessionQueue)
+    func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
+        studio.configureCamera(with: dataOutputQueue, videoPreviewLayer: videoPreviewLayer, sessionQueue: sessionQueue) { result in
+            switch result {
+            case .success(let isSuccess):
+                completion(.success(isSuccess))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
     
-    func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue) {
-        studio.configureMicrophone(with: dataOutputQueue, sessionQueue: sessionQueue)
+    func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
+        studio.configureMicrophone(with: dataOutputQueue, sessionQueue: sessionQueue) { result in
+            switch result {
+            case .success(let isSuccess):
+                completion(.success(isSuccess))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
     
 }

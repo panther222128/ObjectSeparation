@@ -9,10 +9,14 @@ import UIKit
 import AVFoundation
 import Photos
 
-class MovieRecordViewController: UIViewController {
+enum AuthorizationError: String, Error {
+    case cameraNotAuthorized = "Camera authorization"
+}
+
+final class MovieRecordViewController: UIViewController {
     
     @IBOutlet weak var videoPreviewView: PreviewView!
-    @IBOutlet weak var recordButton: UIButton!
+    @IBOutlet weak var recordButton: RecordButton!
     
     static let storyboardName = "MovieRecordViewController"
     static let storyboardID = "MovieRecordViewController"
@@ -34,6 +38,13 @@ class MovieRecordViewController: UIViewController {
         return viewController
     }
     
+    private func presentAlert(of error: Error) {
+        let alert = UIAlertController(title: Constants.AlertMessages.errorTitle, message: "\(error)", preferredStyle: UIAlertController.Style.alert)
+        let addAlertAction = UIAlertAction(title: Constants.AlertMessages.ok, style: .default)
+        alert.addAction(addAlertAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     private func checkDeviceAuthorization() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
@@ -44,7 +55,7 @@ class MovieRecordViewController: UIViewController {
             }
             
         case .denied:
-            return
+            presentAlert(of: AuthorizationError.cameraNotAuthorized)
             
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video, completionHandler: { [weak self] isAuthorized in
@@ -57,7 +68,7 @@ class MovieRecordViewController: UIViewController {
                         self?.viewModel.configureMicrophone(with: dataOutputQueue, sessionQueue: sessionQueue)
                     }
                 } else {
-                    return
+                    self?.presentAlert(of: AuthorizationError.cameraNotAuthorized)
                 }
             })
             
@@ -79,6 +90,7 @@ class MovieRecordViewController: UIViewController {
     }
     
     @IBAction func recordButtonAction(_ sender: Any) {
+        recordButton.toggle()
     }
     
 }
