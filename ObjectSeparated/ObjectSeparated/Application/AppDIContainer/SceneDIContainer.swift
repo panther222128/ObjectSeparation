@@ -10,7 +10,8 @@ import UIKit
 final class SceneDIContainer: ViewFlowCoordinatorDependencies {
     
     struct Dependencies {
-        
+        let deviceProvider: DeviceProvidable
+        let assetWriter: AssetWriter
     }
     
     private let dependencies: Dependencies
@@ -28,7 +29,7 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
     }
     
     func makeStudio() -> StudioConfigurable {
-        return DefaultStudio()
+        return DefaultStudio(deviceProvider: dependencies.deviceProvider, assetWriter: dependencies.assetWriter)
     }
     
     func makeMovieRecordRepository() -> MovieRecordRepository {
