@@ -43,8 +43,8 @@ final class DeviceProvider: DeviceProvidable {
         do {
             try configureVideoDeviceInput()
             try addVideoDeviceInput(to: captureSession)
-        } catch {
-            
+        } catch let error {
+            throw error
         }
     }
     
@@ -52,8 +52,8 @@ final class DeviceProvider: DeviceProvidable {
         do {
             try configureAudioDeviceInput()
             try addAudioDeviceInput(to: captureSession)
-        } catch {
-            
+        } catch let error {
+            throw error
         }
     }
     
