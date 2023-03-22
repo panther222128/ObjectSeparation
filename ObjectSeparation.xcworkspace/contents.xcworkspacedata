@@ -7,4 +7,7 @@
    <FileRef
       location = "group:ObjectSeparated/ObjectSeparated.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:ObjectSeprationDone/ObjectSeprationDone.xcodeproj">
+   </FileRef>
 </Workspace>

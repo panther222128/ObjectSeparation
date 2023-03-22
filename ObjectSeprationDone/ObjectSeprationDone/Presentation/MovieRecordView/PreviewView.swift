@@ -1,8 +1,8 @@
 //
 //  PreviewView.swift
-//  ObjectSeparation
+//  ObjectSeprationDone
 //
-//  Created by Horus on 2023/03/04.
+//  Created by Horus on 2023/03/22.
 //
 
 import UIKit
