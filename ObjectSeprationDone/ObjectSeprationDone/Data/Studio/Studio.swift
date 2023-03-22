@@ -160,11 +160,6 @@ extension DefaultStudio {
     }
 }
 
-// MARK: - Settings
-extension DefaultStudio {
-    
-}
-
 // MARK: - Video
 extension DefaultStudio {
     private func addVideoDataOutput() throws {
