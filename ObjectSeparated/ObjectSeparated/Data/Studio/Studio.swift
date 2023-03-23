@@ -261,31 +261,26 @@ extension DefaultStudio {
 
 extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptureAudioDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        if let output = output as? AVCaptureVideoDataOutput {
-            processVideoSampleBuffer(sampleBuffer, from: output)
-        } else if let output = output as? AVCaptureAudioDataOutput {
-            processsAudioSampleBuffer(sampleBuffer, from: output)
-        }
+        processVideoSampleBuffer(sampleBuffer)
+        processsAudioSampleBuffer(sampleBuffer)
     }
 
-    // MARK: - AVCaptureVideoDataOutput -> not called in method
-    private func processVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer, from videoDataOutput: AVCaptureVideoDataOutput) {
+    private func processVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer),
             let formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer) else {
                 return
         }
         guard let videoSampleBuffer = createVideoSampleBufferWithPixelBuffer(pixelBuffer,
-                                                                                  formatDescription: formatDescription,
-                                                                                  presentationTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) else {
-                                                                                        print("Error: Unable to create sample buffer from pixelbuffer")
-                                                                                        return
+                                                                             formatDescription: formatDescription,
+                                                                             presentationTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) else {
+            print("Error: Unable to create sample buffer from pixelbuffer")
+            return
         }
         
         assetWriter.recordVideo(sampleBuffer: videoSampleBuffer)
     }
 
-    // MARK: - AVCaptureAudioDataOutput -> not called in method
-    private func processsAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer, from audioDataOutput: AVCaptureAudioDataOutput) {
+    private func processsAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
         assetWriter.recordAudio(sampleBuffer: sampleBuffer)
     }
     

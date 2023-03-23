@@ -22,6 +22,7 @@ enum StudioError: Error {
     case cannotFindAudioDeviceInput
     case cannotFindAudioDeviceInputPort
     case cannotFindVideoTransform
+    case cannotFindMicrophone
 }
 
 enum SessionError: Error {
@@ -51,7 +52,8 @@ protocol StudioConfigurable {
 
 final class DefaultStudio: NSObject, StudioConfigurable {
     
-    private let deviceProvider: DeviceProvidable
+    private let cameraProvider: CameraProvidable
+    private let microphoneProvider: MicrophoneProvidable
     private let assetWriter: AssetWriter
     private var captureSession: AVCaptureSession?
     private var videoDataOutput: AVCaptureVideoDataOutput?
@@ -59,8 +61,9 @@ final class DefaultStudio: NSObject, StudioConfigurable {
     private var videoPixelFormat: [String: Any]?
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
     
-    init(deviceProvider: DeviceProvidable, assetWriter: AssetWriter) {
-        self.deviceProvider = deviceProvider
+    init(cameraProvider: CameraProvidable, microphoneProvider: MicrophoneProvidable, assetWriter: AssetWriter) {
+        self.cameraProvider = cameraProvider
+        self.microphoneProvider = microphoneProvider
         self.assetWriter = assetWriter
         self.captureSession = nil
         self.videoDataOutput = nil
@@ -89,7 +92,7 @@ final class DefaultStudio: NSObject, StudioConfigurable {
                 captureSession.commitConfiguration()
             }
             do {
-                try self.deviceProvider.setupVideoDeviceInput(to: captureSession)
+                try self.cameraProvider.setupVideoDeviceInput(to: captureSession)
                 try self.addVideoDataOutput()
                 try self.setVideoSampleBufferDelegate(on: dataOutputQueue)
                 try self.addVideoConnection()
@@ -109,7 +112,7 @@ final class DefaultStudio: NSObject, StudioConfigurable {
                 captureSession.commitConfiguration()
             }
             do {
-                try self.deviceProvider.setupAudioDeviceInput(to: captureSession)
+                try self.microphoneProvider.setupAudioDeviceInput(to: captureSession)
                 try self.addAudioDataOutput()
                 try self.setAudioSampleBufferDelegate(on: dataOutputQueue)
                 try self.addAudioConnection()
@@ -187,8 +190,8 @@ extension DefaultStudio {
     }
     
     private func addVideoConnection() throws {
-        guard let camera = deviceProvider.camera else { throw StudioError.cannotFindCamera }
-        guard let videoDeviceInput = deviceProvider.videoDeviceInput else { throw StudioError.cannotFindVideoDeviceInput }
+        guard let camera = cameraProvider.camera else { throw StudioError.cannotFindCamera }
+        guard let videoDeviceInput = cameraProvider.videoDeviceInput else { throw StudioError.cannotFindVideoDeviceInput }
         guard let videoDeviceInputPort = videoDeviceInput.ports(for: .video, sourceDeviceType: camera.deviceType, sourceDevicePosition: camera.position).first else { throw StudioError.cannotFindVideoDeviceInputPort }
         guard let videoDataOutput = videoDataOutput else { throw StudioError.cannotFindVideoDataOutput }
         let videoDataOutputConnection = AVCaptureConnection(inputPorts: [videoDeviceInputPort], output: videoDataOutput)
@@ -205,8 +208,8 @@ extension DefaultStudio {
     }
     
     private func addConnection(to videoPreviewLayer: AVCaptureVideoPreviewLayer) throws {
-        guard let videoDeviceInput = deviceProvider.videoDeviceInput else { throw StudioError.cannotFindVideoDeviceInput }
-        guard let camera = deviceProvider.camera else { throw StudioError.cannotFindCamera }
+        guard let videoDeviceInput = cameraProvider.videoDeviceInput else { throw StudioError.cannotFindVideoDeviceInput }
+        guard let camera = cameraProvider.camera else { throw StudioError.cannotFindCamera }
         guard let videoPort = videoDeviceInput.ports(for: .video,
                                                           sourceDeviceType: camera.deviceType,
                                                                sourceDevicePosition: camera.position).first else { throw StudioError.cannotFindVideoDeviceInputPort }
@@ -239,8 +242,8 @@ extension DefaultStudio {
     }
     
     private func addAudioConnection() throws {
-        guard let audioDeviceInput = deviceProvider.audioDeviceInput else { throw StudioError.cannotFindAudioDeviceInput }
-        guard let microphone = deviceProvider.microphone else { throw DeviceError.cannotFindMicrophone }
+        guard let audioDeviceInput = microphoneProvider.audioDeviceInput else { throw StudioError.cannotFindAudioDeviceInput }
+        guard let microphone = microphoneProvider.microphone else { throw StudioError.cannotFindMicrophone }
         guard let audioDeviceInputPort = audioDeviceInput.ports(for: .audio,
                                                                  sourceDeviceType: microphone.deviceType,
                                                                  sourceDevicePosition: .back).first else {
@@ -261,31 +264,26 @@ extension DefaultStudio {
 
 extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptureAudioDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        if let output = output as? AVCaptureVideoDataOutput {
-            processVideoSampleBuffer(sampleBuffer, from: output)
-        } else if let output = output as? AVCaptureAudioDataOutput {
-            processsAudioSampleBuffer(sampleBuffer, from: output)
-        }
+        processVideoSampleBuffer(sampleBuffer)
+        processsAudioSampleBuffer(sampleBuffer)
     }
 
-    // MARK: - AVCaptureVideoDataOutput -> not called in method
-    private func processVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer, from videoDataOutput: AVCaptureVideoDataOutput) {
+    private func processVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer),
             let formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer) else {
                 return
         }
         guard let videoSampleBuffer = createVideoSampleBufferWithPixelBuffer(pixelBuffer,
-                                                                                  formatDescription: formatDescription,
-                                                                                  presentationTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) else {
-                                                                                        print("Error: Unable to create sample buffer from pixelbuffer")
-                                                                                        return
+                                                                             formatDescription: formatDescription,
+                                                                             presentationTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) else {
+            print("Error: Unable to create sample buffer from pixelbuffer")
+            return
         }
         
         assetWriter.recordVideo(sampleBuffer: videoSampleBuffer)
     }
 
-    // MARK: - AVCaptureAudioDataOutput -> not called in method
-    private func processsAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer, from audioDataOutput: AVCaptureAudioDataOutput) {
+    private func processsAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
         assetWriter.recordAudio(sampleBuffer: sampleBuffer)
     }
     
