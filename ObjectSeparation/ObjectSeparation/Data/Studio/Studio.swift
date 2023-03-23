@@ -11,10 +11,8 @@ import Photos
 
 enum StudioError: Error {
     case captureSessionInstantiate
-    case cannotSetLayerConnection
-    case cannotFindAudioDataOutput
     case cannotFindVideoDataOutput
-    case cannotFindCamera
+    case cannotFindAudioDataOutput
 }
 
 enum SessionError: Error {
@@ -32,19 +30,19 @@ enum DeviceError: Error {
     case cannotFindCamera
     case cannotSetupVideoDeviceInput
     case cannotFindVideoDeviceInput
-    case cannotFindAudioDeviceInput
+    case cannotFindVideoDeviceInputPort
     case cannotFindMicrophone
     case cannotSetupAudioDeviceinput
-    case cannotFindVideoDeviceInputPort
+    case cannotFindAudioDeviceInput
     case cannotFindAudioDeviceInputPort
 }
 
 enum AssetWriterError: Error {
-    case assetWriterInstantiate
-    case cannotFindAssetWriter
-    case cannotFindVideoSetting
     case cannotFindAudioSetting
+    case cannotFindVideoSetting
+    case assetWriterInstantiate
     case cannotFindVideoTransform
+    case cannotFindAssetWriter
 }
 
 enum PhotoLibraryError: Error {
