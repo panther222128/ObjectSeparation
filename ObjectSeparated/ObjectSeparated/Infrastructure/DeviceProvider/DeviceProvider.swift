@@ -97,7 +97,7 @@ extension DeviceProvider {
     }
     
     private func addAudioDeviceInput(to captureSession: AVCaptureSession) throws {
-        guard let audioDeviceInput = audioDeviceInput else { throw StudioError.cannotFindAudioDeviceInput }
+        guard let audioDeviceInput = audioDeviceInput else { throw DeviceError.cannotFindAudioDeviceInput }
         if captureSession.canAddInput(audioDeviceInput) {
             captureSession.addInputWithNoConnections(audioDeviceInput)
         } else {
