@@ -11,6 +11,7 @@ enum CameraError: Error {
     case cannotFindCamera
     case cannotSetupVideoDeviceInput
     case cannotFindVideoDeviceInput
+    case cannotFindVideoDeviceInputPort
 }
 
 protocol CameraProvidable {
@@ -45,16 +46,16 @@ final class CameraProvider: CameraProvidable {
 extension CameraProvider {
     private func configureVideoDeviceInput() throws {
         do {
-            guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else { throw DeviceError.cannotFindCamera }
+            guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else { throw CameraError.cannotFindCamera }
             self.camera = camera
             videoDeviceInput = try AVCaptureDeviceInput(device: camera)
         } catch {
-            throw DeviceError.cannotSetupVideoDeviceInput
+            throw CameraError.cannotSetupVideoDeviceInput
         }
     }
     
     private func addVideoDeviceInput(to captureSession: AVCaptureSession) throws {
-        guard let videoDeviceInput = videoDeviceInput else { throw DeviceError.cannotFindVideoDeviceInput }
+        guard let videoDeviceInput = videoDeviceInput else { throw CameraError.cannotFindVideoDeviceInput }
         if captureSession.canAddInput(videoDeviceInput) {
             captureSession.addInputWithNoConnections(videoDeviceInput)
         } else {

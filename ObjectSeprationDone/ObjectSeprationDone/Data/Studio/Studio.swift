@@ -11,18 +11,8 @@ import Photos
 
 enum StudioError: Error {
     case captureSessionInstantiate
-    case cannotSetLayerConnection
-    case cannotFindAudioDataOutput
-    case cannotFindAudioSetting
     case cannotFindVideoDataOutput
-    case cannotFindVideoSetting
-    case cannotFindCamera
-    case cannotFindVideoDeviceInput
-    case cannotFindVideoDeviceInputPort
-    case cannotFindAudioDeviceInput
-    case cannotFindAudioDeviceInputPort
-    case cannotFindVideoTransform
-    case cannotFindMicrophone
+    case cannotFindAudioDataOutput
 }
 
 enum SessionError: Error {

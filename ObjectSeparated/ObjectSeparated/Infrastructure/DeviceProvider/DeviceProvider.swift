@@ -11,8 +11,11 @@ enum DeviceError: Error {
     case cannotFindCamera
     case cannotSetupVideoDeviceInput
     case cannotFindVideoDeviceInput
+    case cannotFindVideoDeviceInputPort
     case cannotFindMicrophone
     case cannotSetupAudioDeviceinput
+    case cannotFindAudioDeviceInput
+    case cannotFindAudioDeviceInputPort
 }
 
 protocol DeviceProvidable {

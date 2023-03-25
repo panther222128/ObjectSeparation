@@ -10,6 +10,8 @@ import AVFoundation
 enum MicrophoneError: Error {
     case cannotFindMicrophone
     case cannotSetupAudioDeviceinput
+    case cannotFindAudioDeviceInput
+    case cannotFindAudioDeviceInputPort
 }
 
 protocol MicrophoneProvidable {
@@ -44,16 +46,16 @@ final class MicrophoneProvider: MicrophoneProvidable {
 extension MicrophoneProvider {
     private func configureAudioDeviceInput() throws {
         do {
-            guard let microphone = AVCaptureDevice.default(for: .audio) else { throw DeviceError.cannotFindMicrophone }
+            guard let microphone = AVCaptureDevice.default(for: .audio) else { throw MicrophoneError.cannotFindMicrophone }
             self.microphone = microphone
             audioDeviceInput = try AVCaptureDeviceInput(device: microphone)
         } catch {
-            throw DeviceError.cannotSetupAudioDeviceinput
+            throw MicrophoneError.cannotSetupAudioDeviceinput
         }
     }
     
     private func addAudioDeviceInput(to captureSession: AVCaptureSession) throws {
-        guard let audioDeviceInput = audioDeviceInput else { throw StudioError.cannotFindAudioDeviceInput }
+        guard let audioDeviceInput = audioDeviceInput else { throw MicrophoneError.cannotFindAudioDeviceInput }
         if captureSession.canAddInput(audioDeviceInput) {
             captureSession.addInputWithNoConnections(audioDeviceInput)
         } else {

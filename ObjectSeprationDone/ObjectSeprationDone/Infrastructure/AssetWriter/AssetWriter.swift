@@ -9,7 +9,10 @@ import UIKit
 import AVFoundation
 
 enum AssetWriterError: Error {
+    case cannotFindAudioSetting
+    case cannotFindVideoSetting
     case assetWriterInstantiate
+    case cannotFindVideoTransform
     case cannotFindAssetWriter
 }
 
@@ -55,7 +58,7 @@ final class DefaultAssetWriter: AssetWriter {
         
         let assetWriterVideoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
         assetWriterVideoInput.expectsMediaDataInRealTime = true
-        guard let videoTransform = videoTransform else { throw StudioError.cannotFindVideoTransform }
+        guard let videoTransform = videoTransform else { throw AssetWriterError.cannotFindVideoTransform }
         assetWriterVideoInput.transform = videoTransform
         assetWriter.add(assetWriterVideoInput)
         
@@ -97,12 +100,12 @@ final class DefaultAssetWriter: AssetWriter {
     }
     
     func createVideoSettings(with videoDataOutput: AVCaptureVideoDataOutput) throws {
-        guard let videoSettings = videoDataOutput.recommendedVideoSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else { throw StudioError.cannotFindVideoSetting }
+        guard let videoSettings = videoDataOutput.recommendedVideoSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else { throw AssetWriterError.cannotFindVideoSetting }
         self.videoSettings = videoSettings
     }
     
     func createAudioSettings(with audioDataOutput: AVCaptureAudioDataOutput) throws {
-        guard let audioSettings = audioDataOutput.recommendedAudioSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else { throw StudioError.cannotFindAudioSetting }
+        guard let audioSettings = audioDataOutput.recommendedAudioSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else { throw AssetWriterError.cannotFindAudioSetting }
         self.audioSettings = audioSettings
     }
     
