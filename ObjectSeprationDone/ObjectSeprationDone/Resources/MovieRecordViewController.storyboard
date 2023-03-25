@@ -21,9 +21,9 @@
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qWi-Pc-8m7" customClass="RecordButton" customModule="ObjectSeprationDone" customModuleProvider="target">
-                                        <rect key="frame" x="184.66666666666666" y="763" width="24" height="14"/>
+                                        <rect key="frame" x="160.66666666666666" y="715" width="72" height="62"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="start_record"/>
                                         <connections>
                                             <action selector="recordButtonAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Ut9-RV-CVQ"/>
                                         </connections>
@@ -56,6 +56,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="start_record" width="48" height="48"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
