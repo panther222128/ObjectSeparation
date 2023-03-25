@@ -42,7 +42,6 @@ final class MicrophoneProvider: MicrophoneProvidable {
     
 }
 
-// MARK: - Audio
 extension MicrophoneProvider {
     private func configureAudioDeviceInput() throws {
         do {

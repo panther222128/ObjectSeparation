@@ -180,9 +180,9 @@ extension DefaultStudio {
     }
     
     private func addVideoConnection() throws {
-        guard let camera = cameraProvider.camera else { throw StudioError.cannotFindCamera }
-        guard let videoDeviceInput = cameraProvider.videoDeviceInput else { throw StudioError.cannotFindVideoDeviceInput }
-        guard let videoDeviceInputPort = videoDeviceInput.ports(for: .video, sourceDeviceType: camera.deviceType, sourceDevicePosition: camera.position).first else { throw StudioError.cannotFindVideoDeviceInputPort }
+        guard let camera = cameraProvider.camera else { throw CameraError.cannotFindCamera }
+        guard let videoDeviceInput = cameraProvider.videoDeviceInput else { throw CameraError.cannotFindVideoDeviceInput }
+        guard let videoDeviceInputPort = videoDeviceInput.ports(for: .video, sourceDeviceType: camera.deviceType, sourceDevicePosition: camera.position).first else { throw CameraError.cannotFindVideoDeviceInputPort }
         guard let videoDataOutput = videoDataOutput else { throw StudioError.cannotFindVideoDataOutput }
         let videoDataOutputConnection = AVCaptureConnection(inputPorts: [videoDeviceInputPort], output: videoDataOutput)
         
@@ -198,11 +198,11 @@ extension DefaultStudio {
     }
     
     private func addConnection(to videoPreviewLayer: AVCaptureVideoPreviewLayer) throws {
-        guard let videoDeviceInput = cameraProvider.videoDeviceInput else { throw StudioError.cannotFindVideoDeviceInput }
-        guard let camera = cameraProvider.camera else { throw StudioError.cannotFindCamera }
+        guard let videoDeviceInput = cameraProvider.videoDeviceInput else { throw CameraError.cannotFindVideoDeviceInput }
+        guard let camera = cameraProvider.camera else { throw CameraError.cannotFindCamera }
         guard let videoPort = videoDeviceInput.ports(for: .video,
                                                           sourceDeviceType: camera.deviceType,
-                                                               sourceDevicePosition: camera.position).first else { throw StudioError.cannotFindVideoDeviceInputPort }
+                                                               sourceDevicePosition: camera.position).first else { throw CameraError.cannotFindVideoDeviceInputPort }
         let videoPreviewLayerConnection = AVCaptureConnection(inputPort: videoPort, videoPreviewLayer: videoPreviewLayer)
         guard let captureSession = captureSession else { throw StudioError.captureSessionInstantiate }
         if captureSession.canAddConnection(videoPreviewLayerConnection) {
@@ -232,12 +232,12 @@ extension DefaultStudio {
     }
     
     private func addAudioConnection() throws {
-        guard let audioDeviceInput = microphoneProvider.audioDeviceInput else { throw StudioError.cannotFindAudioDeviceInput }
-        guard let microphone = microphoneProvider.microphone else { throw StudioError.cannotFindMicrophone }
+        guard let audioDeviceInput = microphoneProvider.audioDeviceInput else { throw MicrophoneError.cannotFindAudioDeviceInput }
+        guard let microphone = microphoneProvider.microphone else { throw MicrophoneError.cannotFindMicrophone }
         guard let audioDeviceInputPort = audioDeviceInput.ports(for: .audio,
                                                                  sourceDeviceType: microphone.deviceType,
                                                                  sourceDevicePosition: .back).first else {
-            throw StudioError.cannotFindAudioDeviceInputPort
+            throw MicrophoneError.cannotFindAudioDeviceInputPort
         }
         guard let audioDataOutput = audioDataOutput else { throw StudioError.cannotFindAudioDataOutput }
         let audioDataOutputConnection = AVCaptureConnection(inputPorts: [audioDeviceInputPort], output: audioDataOutput)

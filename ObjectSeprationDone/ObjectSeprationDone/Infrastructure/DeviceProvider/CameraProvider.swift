@@ -42,7 +42,6 @@ final class CameraProvider: CameraProvidable {
     
 }
 
-// MARK: - Video
 extension CameraProvider {
     private func configureVideoDeviceInput() throws {
         do {
