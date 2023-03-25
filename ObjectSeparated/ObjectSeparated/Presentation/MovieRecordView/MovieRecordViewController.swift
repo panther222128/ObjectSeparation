@@ -51,8 +51,8 @@ final class MovieRecordViewController: UIViewController {
             DispatchQueue.main.async {
                 self.viewModel.startSession(on: self.sessionQueue, with: self.videoPreviewView.videoPreviewLayer)
                 self.viewModel.configureCamera(with: self.dataOutputQueue, videoPreviewLayer: self.videoPreviewView.videoPreviewLayer, sessionQueue: self.sessionQueue)
-                self.viewModel.configureMicrophone(with: self.dataOutputQueue, sessionQueue: self.sessionQueue)
             }
+            self.viewModel.configureMicrophone(with: self.dataOutputQueue, sessionQueue: self.sessionQueue)
             
         case .denied:
             presentAlert(of: AuthorizationError.cameraNotAuthorized)
@@ -60,13 +60,13 @@ final class MovieRecordViewController: UIViewController {
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video, completionHandler: { [weak self] isAuthorized in
                 if isAuthorized {
+                    guard let dataOutputQueue = self?.dataOutputQueue else { return }
+                    guard let sessionQueue = self?.sessionQueue else { return }
                     DispatchQueue.main.async {
-                        guard let dataOutputQueue = self?.dataOutputQueue else { return }
-                        guard let sessionQueue = self?.sessionQueue else { return }
                         self?.viewModel.startSession(on: sessionQueue, with: self?.videoPreviewView.videoPreviewLayer ?? AVCaptureVideoPreviewLayer())
                         self?.viewModel.configureCamera(with: dataOutputQueue, videoPreviewLayer: self?.videoPreviewView.videoPreviewLayer ?? AVCaptureVideoPreviewLayer(), sessionQueue: sessionQueue)
-                        self?.viewModel.configureMicrophone(with: dataOutputQueue, sessionQueue: sessionQueue)
                     }
+                    self?.viewModel.configureMicrophone(with: dataOutputQueue, sessionQueue: sessionQueue)
                 } else {
                     self?.presentAlert(of: AuthorizationError.cameraNotAuthorized)
                 }
