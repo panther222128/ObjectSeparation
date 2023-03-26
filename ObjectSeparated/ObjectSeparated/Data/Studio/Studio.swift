@@ -43,16 +43,16 @@ protocol StudioConfigurable {
 final class DefaultStudio: NSObject, StudioConfigurable {
     
     private let deviceProvider: DeviceProvidable
-    private let assetWriter: AssetWriter
+    private let movieWriter: MovieWriter
     private var captureSession: AVCaptureSession?
     private var videoDataOutput: AVCaptureVideoDataOutput?
     private var audioDataOutput: AVCaptureAudioDataOutput?
     private var videoPixelFormat: [String: Any]?
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
     
-    init(deviceProvider: DeviceProvidable, assetWriter: AssetWriter) {
+    init(deviceProvider: DeviceProvidable, movieWriter: MovieWriter) {
         self.deviceProvider = deviceProvider
-        self.assetWriter = assetWriter
+        self.movieWriter = movieWriter
         self.captureSession = nil
         self.videoDataOutput = nil
         self.audioDataOutput = nil
@@ -115,10 +115,10 @@ final class DefaultStudio: NSObject, StudioConfigurable {
         do {
             guard let videoDataOutput = videoDataOutput else { return }
             guard let audioDataOutput = audioDataOutput else { return }
-            try assetWriter.createVideoSettings(with: videoDataOutput)
-            try assetWriter.createAudioSettings(with: audioDataOutput)
-            try assetWriter.createVideoTransform(from: videoDataOutput)
-            try assetWriter.startRecord()
+            try movieWriter.createVideoSettings(with: videoDataOutput)
+            try movieWriter.createAudioSettings(with: audioDataOutput)
+            try movieWriter.createVideoTransform(from: videoDataOutput)
+            try movieWriter.startRecord()
             completion(.success(true))
         } catch let error {
             completion(.failure(error))
@@ -127,7 +127,7 @@ final class DefaultStudio: NSObject, StudioConfigurable {
     
     func stopRecording(completion: @escaping (Result<URL, Error>) -> Void) {
         do {
-            try assetWriter.stopRecord { url in
+            try movieWriter.stopRecord { url in
                 completion(.success(url))
             }
         } catch let error {
@@ -268,11 +268,11 @@ extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptur
             return
         }
         
-        assetWriter.recordVideo(sampleBuffer: videoSampleBuffer)
+        movieWriter.recordVideo(sampleBuffer: videoSampleBuffer)
     }
 
     private func processsAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
-        assetWriter.recordAudio(sampleBuffer: sampleBuffer)
+        movieWriter.recordAudio(sampleBuffer: sampleBuffer)
     }
     
     private func createVideoSampleBufferWithPixelBuffer(_ pixelBuffer: CVPixelBuffer, formatDescription: CMFormatDescription, presentationTime: CMTime) -> CMSampleBuffer? {

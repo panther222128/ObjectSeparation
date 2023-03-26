@@ -37,12 +37,12 @@ enum DeviceError: Error {
     case cannotFindAudioDeviceInputPort
 }
 
-enum AssetWriterError: Error {
+enum MovieWriterError: Error {
     case cannotFindAudioSetting
     case cannotFindVideoSetting
-    case assetWriterInstantiate
+    case movieWriterInstantiate
     case cannotFindVideoTransform
-    case cannotFindAssetWriter
+    case cannotFindMovieWriter
 }
 
 enum PhotoLibraryError: Error {
@@ -72,7 +72,7 @@ final class DefaultStudio: NSObject, StudioConfigurable {
     private var videoSettings: [String: NSObject]?
     private var audioSettings: [String: NSObject]?
     private var videoPixelFormat: [String: Any]?
-    private var assetWriter: AVAssetWriter?
+    private var movieWriter: AVAssetWriter?
     private var videoAssetWriterInput: AVAssetWriterInput?
     private var audioAssetWriterInput: AVAssetWriterInput?
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
@@ -90,7 +90,7 @@ final class DefaultStudio: NSObject, StudioConfigurable {
         self.videoSettings = nil
         self.audioSettings = nil
         self.videoPixelFormat = nil
-        self.assetWriter = nil
+        self.movieWriter = nil
         self.videoAssetWriterInput = nil
         self.audioAssetWriterInput = nil
         self.backgroundRecordingID = nil
@@ -330,14 +330,14 @@ extension DefaultStudio {
 extension DefaultStudio {
     private func createAudioSettings() throws {
         guard let audioDataOutput = audioDataOutput else { throw StudioError.cannotFindAudioDataOutput }
-        guard let audioSettings = audioDataOutput.recommendedAudioSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else { throw AssetWriterError.cannotFindAudioSetting }
+        guard let audioSettings = audioDataOutput.recommendedAudioSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else { throw MovieWriterError.cannotFindAudioSetting }
 
         self.audioSettings = audioSettings
     }
     
     private func createVideoSettings() throws {
         guard let videoDataOutput = videoDataOutput else { throw StudioError.cannotFindVideoDataOutput }
-        guard let videoSettings = videoDataOutput.recommendedVideoSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else { throw AssetWriterError.cannotFindVideoSetting }
+        guard let videoSettings = videoDataOutput.recommendedVideoSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else { throw MovieWriterError.cannotFindVideoSetting }
 
         self.videoSettings = videoSettings
     }
@@ -403,24 +403,24 @@ extension DefaultStudio {
     }
 }
 
-// MARK: - Asset writer
+// MARK: - Movie writer
 extension DefaultStudio {
     private func startRecord() throws {
         let outputFileName = NSUUID().uuidString
         let outputFileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(outputFileName).appendingPathExtension("MOV")
-        guard let assetWriter = try? AVAssetWriter(url: outputFileURL, fileType: .mov) else { throw AssetWriterError.assetWriterInstantiate }
+        guard let movieWriter = try? AVAssetWriter(url: outputFileURL, fileType: .mov) else { throw MovieWriterError.movieWriterInstantiate }
         
         let assetWriterAudioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioSettings)
         assetWriterAudioInput.expectsMediaDataInRealTime = true
-        assetWriter.add(assetWriterAudioInput)
+        movieWriter.add(assetWriterAudioInput)
         
         let assetWriterVideoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
         assetWriterVideoInput.expectsMediaDataInRealTime = true
-        guard let videoTransform = videoTransform else { throw AssetWriterError.cannotFindVideoTransform }
+        guard let videoTransform = videoTransform else { throw MovieWriterError.cannotFindVideoTransform }
         assetWriterVideoInput.transform = videoTransform
-        assetWriter.add(assetWriterVideoInput)
+        movieWriter.add(assetWriterVideoInput)
         
-        self.assetWriter = assetWriter
+        self.movieWriter = movieWriter
         self.videoAssetWriterInput = assetWriterAudioInput
         self.audioAssetWriterInput = assetWriterVideoInput
         
@@ -428,23 +428,23 @@ extension DefaultStudio {
     }
     
     private func stopRecord(completion: @escaping (URL) -> Void) throws {
-        guard let assetWriter = assetWriter else { throw AssetWriterError.cannotFindAssetWriter }
+        guard let movieWriter = movieWriter else { throw MovieWriterError.cannotFindMovieWriter }
         
         self.isRecording = false
-        self.assetWriter = nil
+        self.movieWriter = nil
         
-        assetWriter.finishWriting {
-            completion(assetWriter.outputURL)
+        movieWriter.finishWriting {
+            completion(movieWriter.outputURL)
         }
     }
     
     private func recordVideo(sampleBuffer: CMSampleBuffer) {
-        guard isRecording, let assetWriter = assetWriter else { return }
+        guard isRecording, let movieWriter = movieWriter else { return }
         
-        if assetWriter.status == .unknown {
-            assetWriter.startWriting()
-            assetWriter.startSession(atSourceTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer))
-        } else if assetWriter.status == .writing {
+        if movieWriter.status == .unknown {
+            movieWriter.startWriting()
+            movieWriter.startSession(atSourceTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer))
+        } else if movieWriter.status == .writing {
             if let input = videoAssetWriterInput,
                 input.isReadyForMoreMediaData {
                 input.append(sampleBuffer)
@@ -453,7 +453,7 @@ extension DefaultStudio {
     }
     
     private func recordAudio(sampleBuffer: CMSampleBuffer) {
-        guard isRecording, let assetWriter = assetWriter, assetWriter.status == .writing, let input = audioAssetWriterInput, input.isReadyForMoreMediaData else { return }
+        guard isRecording, let movieWriter = movieWriter, movieWriter.status == .writing, let input = audioAssetWriterInput, input.isReadyForMoreMediaData else { return }
         input.append(sampleBuffer)
     }
 }

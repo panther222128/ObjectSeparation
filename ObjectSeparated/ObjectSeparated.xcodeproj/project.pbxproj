@@ -12,7 +12,7 @@
 		A913935229B329020023A151 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A913935129B329020023A151 /* Assets.xcassets */; };
 		A913935529B329020023A151 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A913935329B329020023A151 /* LaunchScreen.storyboard */; };
 		A93CB96329C9DE1900481A99 /* DeviceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93CB96229C9DE1900481A99 /* DeviceProvider.swift */; };
-		A93CB96629C9E2D500481A99 /* AssetWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93CB96529C9E2D500481A99 /* AssetWriter.swift */; };
+		A93CB96629C9E2D500481A99 /* MovieWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93CB96529C9E2D500481A99 /* MovieWriter.swift */; };
 		A9749BBF29C7551F002E0DD4 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9749BBE29C7551F002E0DD4 /* Utilities.swift */; };
 		A9749BC129C75526002E0DD4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9749BC029C75526002E0DD4 /* Constants.swift */; };
 		A9749BCA29C75595002E0DD4 /* AppDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9749BC929C75595002E0DD4 /* AppDIContainer.swift */; };
@@ -39,7 +39,7 @@
 		A913935429B329020023A151 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A913935629B329020023A151 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A93CB96229C9DE1900481A99 /* DeviceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProvider.swift; sourceTree = "<group>"; };
-		A93CB96529C9E2D500481A99 /* AssetWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetWriter.swift; sourceTree = "<group>"; };
+		A93CB96529C9E2D500481A99 /* MovieWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieWriter.swift; sourceTree = "<group>"; };
 		A9749BBE29C7551F002E0DD4 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		A9749BC029C75526002E0DD4 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		A9749BC929C75595002E0DD4 /* AppDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDIContainer.swift; sourceTree = "<group>"; };
@@ -111,7 +111,7 @@
 		A93CB96429C9E2C800481A99 /* AssetWriter */ = {
 			isa = PBXGroup;
 			children = (
-				A93CB96529C9E2D500481A99 /* AssetWriter.swift */,
+				A93CB96529C9E2D500481A99 /* MovieWriter.swift */,
 			);
 			path = AssetWriter;
 			sourceTree = "<group>";
@@ -338,7 +338,7 @@
 				A9749BDC29C756BA002E0DD4 /* MovieRecordViewController.swift in Sources */,
 				A9749BDA29C7569E002E0DD4 /* ViewFlowCoordinator.swift in Sources */,
 				A9749BDE29C756C7002E0DD4 /* MovieRecordViewModel.swift in Sources */,
-				A93CB96629C9E2D500481A99 /* AssetWriter.swift in Sources */,
+				A93CB96629C9E2D500481A99 /* MovieWriter.swift in Sources */,
 				A9749BBF29C7551F002E0DD4 /* Utilities.swift in Sources */,
 				A913934B29B329000023A151 /* SceneDelegate.swift in Sources */,
 			);

@@ -19,12 +19,12 @@ final class AppDIContainer {
         return MicrophoneProvider()
     }()
     
-    lazy var assetWriter: AssetWriter = {
-        return DefaultAssetWriter()
+    lazy var movieWriter: MovieWriter = {
+        return DefaultMovieWriter()
     }()
     
     func makeSceneDIContainer() -> SceneDIContainer {
-        let dependencies = SceneDIContainer.Dependencies(cameraProvidable: cameraProvider, microphoneProvidable: microphoneProvider, assetWriter: assetWriter)
+        let dependencies = SceneDIContainer.Dependencies(cameraProvidable: cameraProvider, microphoneProvidable: microphoneProvider, movieWriter: movieWriter)
         return SceneDIContainer(dependencies: dependencies)
     }
     

@@ -15,12 +15,12 @@ final class AppDIContainer {
         return DeviceProvider()
     }()
     
-    lazy var assetWriter: AssetWriter = {
-        return DefaultAssetWriter()
+    lazy var movieWriter: MovieWriter = {
+        return DefaultMovieWriter()
     }()
     
     func makeSceneDIContainer() -> SceneDIContainer {
-        let dependencies = SceneDIContainer.Dependencies(deviceProvider: deviceProvider, assetWriter: assetWriter)
+        let dependencies = SceneDIContainer.Dependencies(deviceProvider: deviceProvider, movieWriter: movieWriter)
         return SceneDIContainer(dependencies: dependencies)
     }
     

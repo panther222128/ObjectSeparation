@@ -19,7 +19,7 @@
 		A98D243929CB44BC0076319F /* MovieRecordViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A98D243829CB44BC0076319F /* MovieRecordViewController.storyboard */; };
 		A98D243B29CB44CC0076319F /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D243A29CB44CC0076319F /* Utilities.swift */; };
 		A98D243D29CB44E40076319F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D243C29CB44E40076319F /* Constants.swift */; };
-		A98D244129CB45CD0076319F /* AssetWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D244029CB45CD0076319F /* AssetWriter.swift */; };
+		A98D244129CB45CD0076319F /* MovieWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D244029CB45CD0076319F /* MovieWriter.swift */; };
 		A98D244729CB461D0076319F /* Studio.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D244629CB461D0076319F /* Studio.swift */; };
 		A98D244929CB463F0076319F /* DefaultMovieRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D244829CB463F0076319F /* DefaultMovieRecordRepository.swift */; };
 		A98D244C29CB46730076319F /* MovieRecordUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D244B29CB46730076319F /* MovieRecordUseCase.swift */; };
@@ -47,7 +47,7 @@
 		A98D243829CB44BC0076319F /* MovieRecordViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MovieRecordViewController.storyboard; sourceTree = "<group>"; };
 		A98D243A29CB44CC0076319F /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		A98D243C29CB44E40076319F /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		A98D244029CB45CD0076319F /* AssetWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetWriter.swift; sourceTree = "<group>"; };
+		A98D244029CB45CD0076319F /* MovieWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieWriter.swift; sourceTree = "<group>"; };
 		A98D244629CB461D0076319F /* Studio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Studio.swift; sourceTree = "<group>"; };
 		A98D244829CB463F0076319F /* DefaultMovieRecordRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultMovieRecordRepository.swift; sourceTree = "<group>"; };
 		A98D244B29CB46730076319F /* MovieRecordUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieRecordUseCase.swift; sourceTree = "<group>"; };
@@ -208,7 +208,7 @@
 		A98D243E29CB45B70076319F /* AssetWriter */ = {
 			isa = PBXGroup;
 			children = (
-				A98D244029CB45CD0076319F /* AssetWriter.swift */,
+				A98D244029CB45CD0076319F /* MovieWriter.swift */,
 			);
 			path = AssetWriter;
 			sourceTree = "<group>";
@@ -326,7 +326,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A98D241329CB43B40076319F /* AppDelegate.swift in Sources */,
-				A98D244129CB45CD0076319F /* AssetWriter.swift in Sources */,
+				A98D244129CB45CD0076319F /* MovieWriter.swift in Sources */,
 				A96200AA29CC880D0086BE04 /* MicrophoneProvider.swift in Sources */,
 				A98D243B29CB44CC0076319F /* Utilities.swift in Sources */,
 				A98D244F29CB46980076319F /* MovieRecordRepository.swift in Sources */,
