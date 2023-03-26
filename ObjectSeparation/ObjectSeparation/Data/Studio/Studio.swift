@@ -151,11 +151,16 @@ final class DefaultStudio: NSObject, StudioConfigurable {
     
     func startRecording(completion: @escaping (Result<Bool, Error>) -> Void) {
         do {
-            try createVideoSettings()
-            try createAudioSettings()
-            try createVideoTransform()
-            try startRecord()
-            completion(.success(true))
+            try startMovieRecord(completion: { result in
+                switch result {
+                case .success(let isSuccess):
+                    completion(.success(isSuccess))
+                    
+                case .failure(let error):
+                    completion(.failure(error))
+                    
+                }
+            })
         } catch let error {
             completion(.failure(error))
         }
@@ -163,8 +168,17 @@ final class DefaultStudio: NSObject, StudioConfigurable {
     
     func stopRecording(completion: @escaping (Result<URL, Error>) -> Void) {
         do {
-            try stopRecord { url in
-                completion(.success(url))
+            try stopRecord { [weak self] url in
+                self?.saveMovieToPhotoLibrary(url) { result in
+                    switch result {
+                    case .success(let url):
+                        completion(.success(url))
+                        
+                    case .failure(let error):
+                        completion(.failure(error))
+                        
+                    }
+                }
             }
         } catch let error {
             completion(.failure(error))
@@ -184,6 +198,21 @@ extension DefaultStudio {
     private func setCaptureSession(for layer: AVCaptureVideoPreviewLayer) throws {
         guard let captureSession = captureSession else { throw StudioError.captureSessionInstantiate }
         layer.setSessionWithNoConnection(captureSession)
+    }
+}
+
+// MARK: - Record
+extension DefaultStudio {
+    private func startMovieRecord(completion: @escaping (Result<Bool, Error>) -> Void) throws {
+        do {
+            try createVideoSettings()
+            try createAudioSettings()
+            try createVideoTransform()
+            try startRecord()
+            completion(.success(true))
+        } catch let error {
+            completion(.failure(error))
+        }
     }
 }
 
@@ -328,28 +357,33 @@ extension DefaultStudio {
 
 // MARK: - Settings
 extension DefaultStudio {
-    private func createAudioSettings() throws {
-        guard let audioDataOutput = audioDataOutput else { throw StudioError.cannotFindAudioDataOutput }
-        guard let audioSettings = audioDataOutput.recommendedAudioSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else { throw MovieWriterError.cannotFindAudioSetting }
-
-        self.audioSettings = audioSettings
-    }
-    
     private func createVideoSettings() throws {
         guard let videoDataOutput = videoDataOutput else { throw StudioError.cannotFindVideoDataOutput }
         guard let videoSettings = videoDataOutput.recommendedVideoSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else { throw MovieWriterError.cannotFindVideoSetting }
 
         self.videoSettings = videoSettings
     }
+    
+    private func createAudioSettings() throws {
+        guard let audioDataOutput = audioDataOutput else { throw StudioError.cannotFindAudioDataOutput }
+        guard let audioSettings = audioDataOutput.recommendedAudioSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else {
+            self.audioSettings = nil
+            return
+        }
+        self.audioSettings = audioSettings
+    }
 }
 
 extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptureAudioDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        processVideoSampleBuffer(sampleBuffer)
-        processsAudioSampleBuffer(sampleBuffer)
+        if let videoDataOutput = output as? AVCaptureVideoDataOutput {
+            processVideoSampleBuffer(sampleBuffer, fromOutput: videoDataOutput)
+        } else if let audioDataOutput = output as? AVCaptureAudioDataOutput {
+            processsAudioSampleBuffer(sampleBuffer, fromOutput: audioDataOutput)
+        }
     }
 
-    private func processVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
+    private func processVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer, fromOutput: AVCaptureVideoDataOutput) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer),
             let formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer) else {
                 return
@@ -360,11 +394,12 @@ extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptur
             print("Error: Unable to create sample buffer from pixelbuffer")
             return
         }
-        
+        guard videoDataOutput == videoDataOutput else { return }
         recordVideo(sampleBuffer: videoSampleBuffer)
     }
 
-    private func processsAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
+    private func processsAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer, fromOutput: AVCaptureAudioDataOutput) {
+        guard audioDataOutput == audioDataOutput else { return }
         recordAudio(sampleBuffer: sampleBuffer)
     }
     
@@ -410,19 +445,19 @@ extension DefaultStudio {
         let outputFileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(outputFileName).appendingPathExtension("MOV")
         guard let movieWriter = try? AVAssetWriter(url: outputFileURL, fileType: .mov) else { throw MovieWriterError.movieWriterInstantiate }
         
-        let assetWriterAudioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioSettings)
-        assetWriterAudioInput.expectsMediaDataInRealTime = true
-        movieWriter.add(assetWriterAudioInput)
-        
         let assetWriterVideoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
         assetWriterVideoInput.expectsMediaDataInRealTime = true
         guard let videoTransform = videoTransform else { throw MovieWriterError.cannotFindVideoTransform }
         assetWriterVideoInput.transform = videoTransform
         movieWriter.add(assetWriterVideoInput)
         
+        let assetWriterAudioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioSettings)
+        assetWriterAudioInput.expectsMediaDataInRealTime = true
+        movieWriter.add(assetWriterAudioInput)
+        
         self.movieWriter = movieWriter
-        self.videoAssetWriterInput = assetWriterAudioInput
-        self.audioAssetWriterInput = assetWriterVideoInput
+        self.videoAssetWriterInput = assetWriterVideoInput
+        self.audioAssetWriterInput = assetWriterAudioInput
         
         isRecording = true
     }

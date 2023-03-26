@@ -11,4 +11,6 @@ protocol MovieRecordRepository {
     func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
+    func startMovieRecord(completion: @escaping (Result<Bool, Error>) -> Void)
+    func stopMovieRecord(completion: @escaping (Result<URL, Error>) -> Void)
 }

@@ -108,12 +108,12 @@
 			path = DeviceProvider;
 			sourceTree = "<group>";
 		};
-		A93CB96429C9E2C800481A99 /* AssetWriter */ = {
+		A93CB96429C9E2C800481A99 /* MovieWriter */ = {
 			isa = PBXGroup;
 			children = (
 				A93CB96529C9E2D500481A99 /* MovieWriter.swift */,
 			);
-			path = AssetWriter;
+			path = MovieWriter;
 			sourceTree = "<group>";
 		};
 		A9749BB329C753FB002E0DD4 /* Constants */ = {
@@ -150,7 +150,7 @@
 		A9749BB629C75410002E0DD4 /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
-				A93CB96429C9E2C800481A99 /* AssetWriter */,
+				A93CB96429C9E2C800481A99 /* MovieWriter */,
 				A93CB96129C9DE0500481A99 /* DeviceProvider */,
 			);
 			path = Infrastructure;

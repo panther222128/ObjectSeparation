@@ -48,4 +48,30 @@ final class DefaultMovieRecordRepository: MovieRecordRepository {
         }
     }
     
+    func startMovieRecord(completion: @escaping (Result<Bool, Error>) -> Void) {
+        studio.startRecording { result in
+            switch result {
+            case .success(let isSuccess):
+                completion(.success(isSuccess))
+                
+            case .failure(let error):
+                completion(.failure(error))
+                
+            }
+        }
+    }
+    
+    func stopMovieRecord(completion: @escaping (Result<URL, Error>) -> Void) {
+        studio.stopRecording { result in
+            switch result {
+            case .success(let url):
+                completion(.success(url))
+                
+            case .failure(let error):
+                completion(.failure(error))
+                
+            }
+        }
+    }
+    
 }

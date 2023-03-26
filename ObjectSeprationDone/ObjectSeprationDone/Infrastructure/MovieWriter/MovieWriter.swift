@@ -19,13 +19,10 @@ enum MovieWriterError: Error {
 protocol MovieWriter {
     var videoTransform: CGAffineTransform? { get }
     
-    func startRecord() throws
+    func startMovieRecord(with videoDataOuput: AVCaptureVideoDataOutput, _ audioDataOutput: AVCaptureAudioDataOutput) throws
     func stopRecord(completion: @escaping (URL) -> Void) throws
     func recordVideo(sampleBuffer: CMSampleBuffer)
     func recordAudio(sampleBuffer: CMSampleBuffer)
-    func createVideoSettings(with videoDataOutput: AVCaptureVideoDataOutput) throws
-    func createAudioSettings(with audioDataOutput: AVCaptureAudioDataOutput) throws
-    func createVideoTransform(from videoDataOutput: AVCaptureVideoDataOutput) throws
 }
 
 final class DefaultMovieWriter: MovieWriter {
@@ -47,26 +44,15 @@ final class DefaultMovieWriter: MovieWriter {
         self.videoTransform = nil
     }
     
-    func startRecord() throws {
-        let outputFileName = NSUUID().uuidString
-        let outputFileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(outputFileName).appendingPathExtension("MOV")
-        guard let movieWriter = try? AVAssetWriter(url: outputFileURL, fileType: .mov) else { throw MovieWriterError.movieWriterInstantiate }
-        
-        let assetWriterAudioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioSettings)
-        assetWriterAudioInput.expectsMediaDataInRealTime = true
-        movieWriter.add(assetWriterAudioInput)
-        
-        let assetWriterVideoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
-        assetWriterVideoInput.expectsMediaDataInRealTime = true
-        guard let videoTransform = videoTransform else { throw MovieWriterError.cannotFindVideoTransform }
-        assetWriterVideoInput.transform = videoTransform
-        movieWriter.add(assetWriterVideoInput)
-        
-        self.movieWriter = movieWriter
-        self.videoAssetWriterInput = assetWriterAudioInput
-        self.audioAssetWriterInput = assetWriterVideoInput
-        
-        isRecording = true
+    func startMovieRecord(with videoDataOuput: AVCaptureVideoDataOutput, _ audioDataOutput: AVCaptureAudioDataOutput) throws {
+        do {
+            try createVideoSettings(with: videoDataOuput)
+            try createAudioSettings(with: audioDataOutput)
+            try createVideoTransform(from: videoDataOuput)
+            try startRecord()
+        } catch let error {
+            throw error
+        }
     }
     
     func stopRecord(completion: @escaping (URL) -> Void) throws {
@@ -99,17 +85,42 @@ final class DefaultMovieWriter: MovieWriter {
         input.append(sampleBuffer)
     }
     
-    func createVideoSettings(with videoDataOutput: AVCaptureVideoDataOutput) throws {
+}
+
+extension DefaultMovieWriter {
+    private func startRecord() throws {
+        let outputFileName = NSUUID().uuidString
+        let outputFileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(outputFileName).appendingPathExtension("MOV")
+        guard let movieWriter = try? AVAssetWriter(url: outputFileURL, fileType: .mov) else { throw MovieWriterError.movieWriterInstantiate }
+        
+        let assetWriterVideoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
+        assetWriterVideoInput.expectsMediaDataInRealTime = true
+        guard let videoTransform = videoTransform else { throw MovieWriterError.cannotFindVideoTransform }
+        assetWriterVideoInput.transform = videoTransform
+        movieWriter.add(assetWriterVideoInput)
+        
+        let assetWriterAudioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioSettings)
+        assetWriterAudioInput.expectsMediaDataInRealTime = true
+        movieWriter.add(assetWriterAudioInput)
+        
+        self.movieWriter = movieWriter
+        self.videoAssetWriterInput = assetWriterVideoInput
+        self.audioAssetWriterInput = assetWriterAudioInput
+        
+        isRecording = true
+    }
+    
+    private func createVideoSettings(with videoDataOutput: AVCaptureVideoDataOutput) throws {
         guard let videoSettings = videoDataOutput.recommendedVideoSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else { throw MovieWriterError.cannotFindVideoSetting }
         self.videoSettings = videoSettings
     }
     
-    func createAudioSettings(with audioDataOutput: AVCaptureAudioDataOutput) throws {
+    private func createAudioSettings(with audioDataOutput: AVCaptureAudioDataOutput) throws {
         guard let audioSettings = audioDataOutput.recommendedAudioSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else { throw MovieWriterError.cannotFindAudioSetting }
         self.audioSettings = audioSettings
     }
     
-    func createVideoTransform(from videoDataOutput: AVCaptureVideoDataOutput) throws {
+    private func createVideoTransform(from videoDataOutput: AVCaptureVideoDataOutput) throws {
         guard let videoConnection = videoDataOutput.connection(with: .video) else { throw SessionError.cannotFindVideoConnection }
         
         let deviceOrientation = UIDevice.current.orientation
@@ -119,6 +130,4 @@ final class DefaultMovieWriter: MovieWriter {
 
         self.videoTransform = cameraTransform
     }
-    
 }
-

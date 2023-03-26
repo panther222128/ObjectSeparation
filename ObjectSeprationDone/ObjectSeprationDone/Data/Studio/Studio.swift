@@ -117,10 +117,7 @@ final class DefaultStudio: NSObject, StudioConfigurable {
         do {
             guard let videoDataOutput = videoDataOutput else { return }
             guard let audioDataOutput = audioDataOutput else { return }
-            try movieWriter.createVideoSettings(with: videoDataOutput)
-            try movieWriter.createAudioSettings(with: audioDataOutput)
-            try movieWriter.createVideoTransform(from: videoDataOutput)
-            try movieWriter.startRecord()
+            try movieWriter.startMovieRecord(with: videoDataOutput, audioDataOutput)
             completion(.success(true))
         } catch let error {
             completion(.failure(error))
@@ -129,8 +126,17 @@ final class DefaultStudio: NSObject, StudioConfigurable {
     
     func stopRecording(completion: @escaping (Result<URL, Error>) -> Void) {
         do {
-            try movieWriter.stopRecord { url in
-                completion(.success(url))
+            try movieWriter.stopRecord { [weak self] url in
+                self?.saveMovieToPhotoLibrary(url) { result in
+                    switch result {
+                    case .success(let url):
+                        completion(.success(url))
+                        
+                    case .failure(let error):
+                        completion(.failure(error))
+                        
+                    }
+                }
             }
         } catch let error {
             completion(.failure(error))
@@ -254,11 +260,14 @@ extension DefaultStudio {
 
 extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptureAudioDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        processVideoSampleBuffer(sampleBuffer)
-        processsAudioSampleBuffer(sampleBuffer)
+        if let videoDataOutput = output as? AVCaptureVideoDataOutput {
+            processVideoSampleBuffer(sampleBuffer, fromOutput: videoDataOutput)
+        } else if let audioDataOutput = output as? AVCaptureAudioDataOutput {
+            processsAudioSampleBuffer(sampleBuffer, fromOutput: audioDataOutput)
+        }
     }
 
-    private func processVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
+    private func processVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer, fromOutput: AVCaptureVideoDataOutput) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer),
             let formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer) else {
                 return
@@ -269,11 +278,12 @@ extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptur
             print("Error: Unable to create sample buffer from pixelbuffer")
             return
         }
-        
+        guard videoDataOutput == videoDataOutput else { return }
         movieWriter.recordVideo(sampleBuffer: videoSampleBuffer)
     }
 
-    private func processsAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
+    private func processsAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer, fromOutput: AVCaptureAudioDataOutput) {
+        guard audioDataOutput == audioDataOutput else { return }
         movieWriter.recordAudio(sampleBuffer: sampleBuffer)
     }
     

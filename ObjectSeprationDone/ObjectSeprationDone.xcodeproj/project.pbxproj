@@ -132,7 +132,7 @@
 		A98D242929CB43EF0076319F /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
-				A98D243E29CB45B70076319F /* AssetWriter */,
+				A98D243E29CB45B70076319F /* MovieWriter */,
 				A98D243F29CB45BD0076319F /* DeviceProvider */,
 			);
 			path = Infrastructure;
@@ -205,12 +205,12 @@
 			path = MovieRecordView;
 			sourceTree = "<group>";
 		};
-		A98D243E29CB45B70076319F /* AssetWriter */ = {
+		A98D243E29CB45B70076319F /* MovieWriter */ = {
 			isa = PBXGroup;
 			children = (
 				A98D244029CB45CD0076319F /* MovieWriter.swift */,
 			);
-			path = AssetWriter;
+			path = MovieWriter;
 			sourceTree = "<group>";
 		};
 		A98D243F29CB45BD0076319F /* DeviceProvider */ = {
