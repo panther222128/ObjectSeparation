@@ -116,7 +116,10 @@ extension DefaultMovieWriter {
     }
     
     private func createAudioSettings(with audioDataOutput: AVCaptureAudioDataOutput) throws {
-        guard let audioSettings = audioDataOutput.recommendedAudioSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else { throw MovieWriterError.cannotFindAudioSetting }
+        guard let audioSettings = audioDataOutput.recommendedAudioSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else {
+            self.audioSettings = nil
+            return
+        }
         self.audioSettings = audioSettings
     }
     

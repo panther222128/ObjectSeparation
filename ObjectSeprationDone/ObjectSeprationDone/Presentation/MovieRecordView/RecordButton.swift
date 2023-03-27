@@ -22,6 +22,7 @@ final class RecordButton: UIButton {
     override init(frame: CGRect) {
         isToggled = false
         super.init(frame: frame)
+        isSelected = false
     }
     
     required init?(coder: NSCoder) {
@@ -31,6 +32,7 @@ final class RecordButton: UIButton {
     
     func toggle() {
         isToggled.toggle()
+        isSelected.toggle()
     }
     
 }
