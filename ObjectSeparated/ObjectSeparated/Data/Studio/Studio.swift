@@ -115,8 +115,16 @@ final class DefaultStudio: NSObject, StudioConfigurable {
         do {
             guard let videoDataOutput = videoDataOutput else { return }
             guard let audioDataOutput = audioDataOutput else { return }
-            try movieWriter.startMovieRecord(with: videoDataOutput, audioDataOutput)
-            completion(.success(true))
+            try movieWriter.startMovieRecord(with: videoDataOutput, audioDataOutput, completion: { result in
+                switch result {
+                case .success(let isSuccess):
+                    completion(.success(isSuccess))
+                    
+                case .failure(let error):
+                    completion(.failure(error))
+                    
+                }
+            })
         } catch let error {
             completion(.failure(error))
         }
