@@ -339,7 +339,7 @@ extension DefaultStudio {
         guard let microphone = microphone else { throw DeviceError.cannotFindMicrophone }
         guard let audioDeviceInputPort = audioDeviceInput.ports(for: .audio,
                                                                  sourceDeviceType: microphone.deviceType,
-                                                                 sourceDevicePosition: .back).first else {
+                                                                 sourceDevicePosition: .unspecified).first else {
             throw DeviceError.cannotFindAudioDeviceInputPort
         }
         guard let audioDataOutput = audioDataOutput else { throw StudioError.cannotFindAudioDataOutput }

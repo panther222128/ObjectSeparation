@@ -18,7 +18,11 @@ protocol MovieRecordViewModel {
 final class DefaultMovieRecordViewModel: MovieRecordViewModel {
     
     private var isSuccess: Bool
-    private var error: Error?
+    private var error: Error? {
+        didSet {
+            print(error)
+        }
+    }
     private let movieRecordUseCase: MovieRecordUseCase
     
     init(movieRecordUseCase: MovieRecordUseCase) {
