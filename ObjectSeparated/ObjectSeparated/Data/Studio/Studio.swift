@@ -48,7 +48,6 @@ final class DefaultStudio: NSObject, StudioConfigurable {
     private var videoDataOutput: AVCaptureVideoDataOutput?
     private var audioDataOutput: AVCaptureAudioDataOutput?
     private var videoPixelFormat: [String: Any]?
-    private var backgroundRecordingID: UIBackgroundTaskIdentifier?
     
     init(deviceProvider: DeviceProvidable, movieWriter: MovieWriter) {
         self.deviceProvider = deviceProvider
@@ -57,7 +56,6 @@ final class DefaultStudio: NSObject, StudioConfigurable {
         self.videoDataOutput = nil
         self.audioDataOutput = nil
         self.videoPixelFormat = nil
-        self.backgroundRecordingID = nil
     }
     
     func startCaptureSession(on sessionQueue: DispatchQueue, with videoPreviewLayer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void) {
@@ -334,15 +332,7 @@ extension DefaultStudio {
                                 completion(.failure(PhotoLibraryError.cannotCleanUpMovieFile))
                             }
                         }
-                        
-                        if let currentBackgroundRecordingID = self.backgroundRecordingID {
-                            self.backgroundRecordingID = UIBackgroundTaskIdentifier.invalid
-                            if currentBackgroundRecordingID != UIBackgroundTaskIdentifier.invalid {
-                                UIApplication.shared.endBackgroundTask(currentBackgroundRecordingID)
-                            }
-                        } else {
-                            completion(.failure(PhotoLibraryError.cannotFindBackgroundRecordingID))
-                        }
+                        completion(.success(movieURL))
                     }
                 })
             } else {
