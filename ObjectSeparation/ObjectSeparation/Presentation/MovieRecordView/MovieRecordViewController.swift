@@ -103,9 +103,9 @@ final class MovieRecordViewController: UIViewController {
     @IBAction func recordButtonAction(_ sender: Any) {
         recordButton.toggle()
         if recordButton.isSelected {
-            viewModel.didStartMovieRecord()
+            viewModel.didStartMovieRecord(on: dataOutputQueue)
         } else {
-            viewModel.didStopMovieRecord()
+            viewModel.didStopMovieRecord(from: dataOutputQueue)
         }
     }
     

@@ -55,8 +55,8 @@ protocol StudioConfigurable {
     func startCaptureSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
-    func startRecording() throws
-    func stopRecording(completion: @escaping (Result<URL, Error>) -> Void)
+    func startRecording(on dataOutputQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
+    func stopRecording(from dataOutputQueue: DispatchQueue, completion: @escaping (Result<URL, Error>) -> Void)
 }
 
 final class DefaultStudio: NSObject, StudioConfigurable {
@@ -147,30 +147,35 @@ final class DefaultStudio: NSObject, StudioConfigurable {
         }
     }
     
-    func startRecording() throws {
-        do {
-            try startMovieRecord()
-        } catch let error {
-            throw error
+    func startRecording(on dataOutputQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
+        dataOutputQueue.async {
+            do {
+                try self.startMovieRecord()
+                completion(.success(true))
+            } catch let error {
+                completion(.failure(error))
+            }
         }
     }
     
-    func stopRecording(completion: @escaping (Result<URL, Error>) -> Void) {
-        do {
-            try stopRecord { [weak self] url in
-                self?.saveMovieToPhotoLibrary(url) { result in
-                    switch result {
-                    case .success(let url):
-                        completion(.success(url))
-                        
-                    case .failure(let error):
-                        completion(.failure(error))
-                        
+    func stopRecording(from dataOutputQueue: DispatchQueue, completion: @escaping (Result<URL, Error>) -> Void) {
+        dataOutputQueue.async {
+            do {
+                try self.stopRecord { [weak self] url in
+                    self?.saveMovieToPhotoLibrary(url) { result in
+                        switch result {
+                        case .success(let url):
+                            completion(.success(url))
+                            
+                        case .failure(let error):
+                            completion(.failure(error))
+                            
+                        }
                     }
                 }
+            } catch let error {
+                completion(.failure(error))
             }
-        } catch let error {
-            completion(.failure(error))
         }
     }
     

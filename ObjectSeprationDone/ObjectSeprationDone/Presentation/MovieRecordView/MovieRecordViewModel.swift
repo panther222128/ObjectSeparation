@@ -11,8 +11,8 @@ protocol MovieRecordViewModel {
     func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer)
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue)
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue)
-    func didStartMovieRecord()
-    func didStopMovieRecord()
+    func didStartMovieRecord(on dataOutputQueue: DispatchQueue)
+    func didStopMovieRecord(from dataOutputQueue: DispatchQueue)
 }
 
 final class DefaultMovieRecordViewModel: MovieRecordViewModel {
@@ -66,16 +66,23 @@ final class DefaultMovieRecordViewModel: MovieRecordViewModel {
         }
     }
     
-    func didStartMovieRecord() {
+    func didStartMovieRecord(on dataOutputQueue: DispatchQueue) {
         do {
-            try movieRecordUseCase.executeMovieRecord()
-        } catch let error {
-            self.error = error
+            movieRecordUseCase.executeMovieRecord(on: dataOutputQueue, completion: { result in
+                switch result {
+                case .success(_):
+                    return
+                    
+                case .failure(let error):
+                    self.error = error
+                    
+                }
+            })
         }
     }
     
-    func didStopMovieRecord() {
-        movieRecordUseCase.executeStopMovieRecord { [weak self] result in
+    func didStopMovieRecord(from dataOutputQueue: DispatchQueue) {
+        movieRecordUseCase.executeStopMovieRecord(from: dataOutputQueue) { [weak self] result in
             switch result {
             case .success(_):
                 return
