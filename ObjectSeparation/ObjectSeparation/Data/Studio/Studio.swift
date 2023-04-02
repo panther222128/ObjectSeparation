@@ -375,18 +375,18 @@ extension DefaultStudio {
 extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptureAudioDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         if let videoDataOutput = output as? AVCaptureVideoDataOutput {
-            processVideoSampleBuffer(sampleBuffer, fromOutput: videoDataOutput)
+            processVideo(sampleBuffer, from: videoDataOutput)
         } else if let audioDataOutput = output as? AVCaptureAudioDataOutput {
-            processsAudioSampleBuffer(sampleBuffer, fromOutput: audioDataOutput)
+            processsAudio(sampleBuffer, from: audioDataOutput)
         }
     }
 
-    private func processVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer, fromOutput: AVCaptureVideoDataOutput) {
+    private func processVideo(_ sampleBuffer: CMSampleBuffer, from: AVCaptureVideoDataOutput) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer),
             let formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer) else {
                 return
         }
-        guard let videoSampleBuffer = createVideoSampleBufferWithPixelBuffer(pixelBuffer,
+        guard let videoSampleBuffer = createVideoSampleBufferWith(pixelBuffer,
                                                                              formatDescription: formatDescription,
                                                                              presentationTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) else {
             print("Error: Unable to create sample buffer from pixelbuffer")
@@ -396,12 +396,12 @@ extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptur
         recordVideo(sampleBuffer: videoSampleBuffer)
     }
 
-    private func processsAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer, fromOutput: AVCaptureAudioDataOutput) {
+    private func processsAudio(_ sampleBuffer: CMSampleBuffer, from: AVCaptureAudioDataOutput) {
         guard audioDataOutput == audioDataOutput else { return }
         recordAudio(sampleBuffer: sampleBuffer)
     }
     
-    private func createVideoSampleBufferWithPixelBuffer(_ pixelBuffer: CVPixelBuffer, formatDescription: CMFormatDescription, presentationTime: CMTime) -> CMSampleBuffer? {
+    private func createVideoSampleBufferWith(_ pixelBuffer: CVPixelBuffer, formatDescription: CMFormatDescription, presentationTime: CMTime) -> CMSampleBuffer? {
         var sampleBuffer: CMSampleBuffer?
         var timingInfo = CMSampleTimingInfo(duration: .invalid, presentationTimeStamp: presentationTime, decodeTimeStamp: .invalid)
         

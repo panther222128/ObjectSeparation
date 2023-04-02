@@ -24,8 +24,8 @@ protocol DeviceProvidable {
     var videoDeviceInput: AVCaptureDeviceInput? { get }
     var audioDeviceInput: AVCaptureDeviceInput? { get }
     
-    func setupVideoDeviceInput(to captureSession: AVCaptureSession) throws
-    func setupAudioDeviceInput(to captureSession: AVCaptureSession) throws
+    func prepareVideoDeviceInput(for captureSession: AVCaptureSession) throws
+    func prepareAudioDeviceInput(for captureSession: AVCaptureSession) throws
 }
 
 final class DeviceProvider: DeviceProvidable {
@@ -42,7 +42,7 @@ final class DeviceProvider: DeviceProvidable {
         self.audioDeviceInput = nil
     }
     
-    func setupVideoDeviceInput(to captureSession: AVCaptureSession) throws {
+    func prepareVideoDeviceInput(for captureSession: AVCaptureSession) throws {
         do {
             try configureVideoDeviceInput()
             try addVideoDeviceInput(to: captureSession)
@@ -51,7 +51,7 @@ final class DeviceProvider: DeviceProvidable {
         }
     }
     
-    func setupAudioDeviceInput(to captureSession: AVCaptureSession) throws {
+    func prepareAudioDeviceInput(for captureSession: AVCaptureSession) throws {
         do {
             try configureAudioDeviceInput()
             try addAudioDeviceInput(to: captureSession)

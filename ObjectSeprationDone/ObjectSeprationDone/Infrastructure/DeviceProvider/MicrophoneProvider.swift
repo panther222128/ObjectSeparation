@@ -18,7 +18,7 @@ protocol MicrophoneProvidable {
     var microphone: AVCaptureDevice? { get }
     var audioDeviceInput: AVCaptureDeviceInput? { get }
     
-    func setupAudioDeviceInput(to captureSession: AVCaptureSession) throws
+    func prepareAudioDeviceInput(for captureSession: AVCaptureSession) throws
 }
 
 final class MicrophoneProvider: MicrophoneProvidable {
@@ -31,7 +31,7 @@ final class MicrophoneProvider: MicrophoneProvidable {
         self.audioDeviceInput = nil
     }
     
-    func setupAudioDeviceInput(to captureSession: AVCaptureSession) throws {
+    func prepareAudioDeviceInput(for captureSession: AVCaptureSession) throws {
         do {
             try configureAudioDeviceInput()
             try addAudioDeviceInput(to: captureSession)

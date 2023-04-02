@@ -18,7 +18,7 @@ protocol CameraProvidable {
     var camera: AVCaptureDevice? { get }
     var videoDeviceInput: AVCaptureDeviceInput? { get }
     
-    func setupVideoDeviceInput(to captureSession: AVCaptureSession) throws
+    func prepareVideoDeviceInput(for captureSession: AVCaptureSession) throws
 }
 
 final class CameraProvider: CameraProvidable {
@@ -31,7 +31,7 @@ final class CameraProvider: CameraProvidable {
         self.videoDeviceInput = nil
     }
     
-    func setupVideoDeviceInput(to captureSession: AVCaptureSession) throws {
+    func prepareVideoDeviceInput(for captureSession: AVCaptureSession) throws {
         do {
             try configureVideoDeviceInput()
             try addVideoDeviceInput(to: captureSession)

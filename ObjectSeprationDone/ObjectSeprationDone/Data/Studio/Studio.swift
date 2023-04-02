@@ -80,7 +80,7 @@ final class DefaultStudio: NSObject, StudioConfigurable {
                 captureSession.commitConfiguration()
             }
             do {
-                try self.cameraProvider.setupVideoDeviceInput(to: captureSession)
+                try self.cameraProvider.prepareVideoDeviceInput(for: captureSession)
                 try self.addVideoDataOutput()
                 try self.setVideoSampleBufferDelegate(on: dataOutputQueue)
                 try self.addVideoConnection()
@@ -100,7 +100,7 @@ final class DefaultStudio: NSObject, StudioConfigurable {
                 captureSession.commitConfiguration()
             }
             do {
-                try self.microphoneProvider.setupAudioDeviceInput(to: captureSession)
+                try self.microphoneProvider.prepareAudioDeviceInput(for: captureSession)
                 try self.addAudioDataOutput()
                 try self.setAudioSampleBufferDelegate(on: dataOutputQueue)
                 try self.addAudioConnection()
@@ -267,13 +267,13 @@ extension DefaultStudio {
 extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptureAudioDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         if let videoDataOutput = output as? AVCaptureVideoDataOutput {
-            processVideoSampleBuffer(sampleBuffer, fromOutput: videoDataOutput)
+            processVideo(sampleBuffer, from: videoDataOutput)
         } else if let audioDataOutput = output as? AVCaptureAudioDataOutput {
-            processsAudioSampleBuffer(sampleBuffer, fromOutput: audioDataOutput)
+            processsAudio(sampleBuffer, from: audioDataOutput)
         }
     }
 
-    private func processVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer, fromOutput: AVCaptureVideoDataOutput) {
+    private func processVideo(_ sampleBuffer: CMSampleBuffer, from: AVCaptureVideoDataOutput) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer),
             let formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer) else {
                 return
@@ -288,7 +288,7 @@ extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptur
         movieWriter.recordVideo(sampleBuffer: videoSampleBuffer)
     }
 
-    private func processsAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer, fromOutput: AVCaptureAudioDataOutput) {
+    private func processsAudio(_ sampleBuffer: CMSampleBuffer, from: AVCaptureAudioDataOutput) {
         guard audioDataOutput == audioDataOutput else { return }
         movieWriter.recordAudio(sampleBuffer: sampleBuffer)
     }
