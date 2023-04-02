@@ -371,14 +371,14 @@ extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptur
         }
     }
 
-    private func processVideo(_ sampleBuffer: CMSampleBuffer, from: AVCaptureVideoDataOutput) {
+    private func processVideo(_ sampleBuffer: CMSampleBuffer, from videoDataOutput: AVCaptureVideoDataOutput) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer),
             let formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer) else {
                 return
         }
         guard let videoSampleBuffer = createVideoSampleBufferWith(pixelBuffer,
-                                                                             formatDescription: formatDescription,
-                                                                             presentationTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) else {
+                                                                  formatDescription: formatDescription,
+                                                                  presentationTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) else {
             print("Error: Unable to create sample buffer from pixelbuffer")
             return
         }
@@ -386,7 +386,7 @@ extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptur
         recordVideo(sampleBuffer: videoSampleBuffer)
     }
 
-    private func processsAudio(_ sampleBuffer: CMSampleBuffer, from: AVCaptureAudioDataOutput) {
+    private func processsAudio(_ sampleBuffer: CMSampleBuffer, from audioDataOutput: AVCaptureAudioDataOutput) {
         guard audioDataOutput == audioDataOutput else { return }
         recordAudio(sampleBuffer: sampleBuffer)
     }

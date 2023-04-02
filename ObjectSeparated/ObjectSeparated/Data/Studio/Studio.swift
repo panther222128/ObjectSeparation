@@ -262,7 +262,7 @@ extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptur
         }
     }
 
-    private func processVideo(_ sampleBuffer: CMSampleBuffer, from: AVCaptureVideoDataOutput) {
+    private func processVideo(_ sampleBuffer: CMSampleBuffer, from videoDataOutput: AVCaptureVideoDataOutput) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer),
             let formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer) else {
                 return
@@ -277,7 +277,7 @@ extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptur
         movieWriter.recordVideo(sampleBuffer: videoSampleBuffer)
     }
 
-    private func processsAudio(_ sampleBuffer: CMSampleBuffer, from: AVCaptureAudioDataOutput) {
+    private func processsAudio(_ sampleBuffer: CMSampleBuffer, from audioDataOutput: AVCaptureAudioDataOutput) {
         guard audioDataOutput == audioDataOutput else { return }
         movieWriter.recordAudio(sampleBuffer: sampleBuffer)
     }
