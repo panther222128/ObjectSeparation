@@ -67,15 +67,10 @@ final class DefaultMovieRecordViewModel: MovieRecordViewModel {
     }
     
     func didStartMovieRecord() {
-        movieRecordUseCase.executeMovieRecord { [weak self] result in
-            switch result {
-            case .success(_):
-                return
-                
-            case .failure(let error):
-                self?.error = error
-                
-            }
+        do {
+            try movieRecordUseCase.executeMovieRecord()
+        } catch let error {
+            self.error = error
         }
     }
     

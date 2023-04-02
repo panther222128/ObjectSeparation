@@ -55,7 +55,7 @@ protocol StudioConfigurable {
     func startCaptureSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
-    func startRecording(completion: @escaping (Result<Bool, Error>) -> Void)
+    func startRecording() throws
     func stopRecording(completion: @escaping (Result<URL, Error>) -> Void)
 }
 
@@ -147,20 +147,11 @@ final class DefaultStudio: NSObject, StudioConfigurable {
         }
     }
     
-    func startRecording(completion: @escaping (Result<Bool, Error>) -> Void) {
+    func startRecording() throws {
         do {
-            try startMovieRecord(completion: { result in
-                switch result {
-                case .success(let isSuccess):
-                    completion(.success(isSuccess))
-                    
-                case .failure(let error):
-                    completion(.failure(error))
-                    
-                }
-            })
+            try startMovieRecord()
         } catch let error {
-            completion(.failure(error))
+            throw error
         }
     }
     
@@ -201,15 +192,14 @@ extension DefaultStudio {
 
 // MARK: - Record
 extension DefaultStudio {
-    private func startMovieRecord(completion: @escaping (Result<Bool, Error>) -> Void) throws {
+    private func startMovieRecord() throws {
         do {
             try createVideoSettings()
             try createAudioSettings()
             try createVideoTransform()
             try startRecord()
-            completion(.success(true))
         } catch let error {
-            completion(.failure(error))
+            throw error
         }
     }
 }

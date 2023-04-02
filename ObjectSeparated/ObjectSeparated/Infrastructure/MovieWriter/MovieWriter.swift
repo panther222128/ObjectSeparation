@@ -19,7 +19,7 @@ enum MovieWriterError: Error {
 protocol MovieWriter {
     var videoTransform: CGAffineTransform? { get }
     
-    func startMovieRecord(with videoDataOuput: AVCaptureVideoDataOutput, _ audioDataOutput: AVCaptureAudioDataOutput, completion: @escaping (Result<Bool, Error>) -> Void) throws
+    func startMovieRecord(with videoDataOuput: AVCaptureVideoDataOutput, _ audioDataOutput: AVCaptureAudioDataOutput) throws
     func stopRecord(completion: @escaping (URL) -> Void) throws
     func recordVideo(sampleBuffer: CMSampleBuffer)
     func recordAudio(sampleBuffer: CMSampleBuffer)
@@ -44,15 +44,14 @@ final class DefaultMovieWriter: MovieWriter {
         self.videoTransform = nil
     }
     
-    func startMovieRecord(with videoDataOuput: AVCaptureVideoDataOutput, _ audioDataOutput: AVCaptureAudioDataOutput, completion: @escaping (Result<Bool, Error>) -> Void) throws {
+    func startMovieRecord(with videoDataOuput: AVCaptureVideoDataOutput, _ audioDataOutput: AVCaptureAudioDataOutput) throws {
         do {
             try createVideoSettings(with: videoDataOuput)
             try createAudioSettings(with: audioDataOutput)
             try createVideoTransform(from: videoDataOuput)
             try startRecord()
-            completion(.success(true))
         } catch let error {
-            completion(.failure(error))
+            throw error
         }
     }
     
