@@ -8,6 +8,7 @@
 import UIKit
 import AVFoundation
 import Photos
+import Combine
 
 enum AuthorizationError: String, Error {
     case cameraNotAuthorized = "Camera authorization"
@@ -23,12 +24,14 @@ final class MovieRecordViewController: UIViewController {
     
     private let dataOutputQueue: DispatchQueue = DispatchQueue(label: "DataOutputQueue")
     private let sessionQueue: DispatchQueue = DispatchQueue(label: "SessionQueue")
+    private var cancellables: Set<AnyCancellable> = []
     
     private var viewModel: MovieRecordViewModel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         checkDeviceAuthorization()
+        subscribeError()
         requestForPhotoAlbumAccess { isSuccess in
             switch isSuccess {
             case true:
@@ -46,6 +49,14 @@ final class MovieRecordViewController: UIViewController {
         guard let viewController = storyboard.instantiateViewController(withIdentifier: storyboardID) as? MovieRecordViewController else { return .init() }
         viewController.viewModel = viewModel
         return viewController
+    }
+    
+    private func subscribeError() {
+        viewModel.error
+            .sink { [weak self] error in
+                self?.presentAlert(of: error)
+            }
+            .store(in: &cancellables)
     }
     
     private func presentAlert(of error: Error) {
@@ -94,8 +105,10 @@ final class MovieRecordViewController: UIViewController {
             switch authorizationStatus {
             case .authorized:
                 completion(true)
+                
             default:
                 completion(false)
+                
             }
         }
     }

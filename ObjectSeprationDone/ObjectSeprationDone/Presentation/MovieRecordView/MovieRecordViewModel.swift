@@ -6,8 +6,11 @@
 //
 
 import AVFoundation
+import Combine
 
 protocol MovieRecordViewModel {
+    var error: PassthroughSubject<Error, Never> { get }
+    
     func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer)
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue)
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue)
@@ -18,12 +21,12 @@ protocol MovieRecordViewModel {
 final class DefaultMovieRecordViewModel: MovieRecordViewModel {
     
     private var isSuccess: Bool
-    private var error: Error?
+    private(set) var error: PassthroughSubject<Error, Never>
     private let movieRecordUseCase: MovieRecordUseCase
     
     init(movieRecordUseCase: MovieRecordUseCase) {
         self.isSuccess = false
-        self.error = nil
+        self.error = PassthroughSubject()
         self.movieRecordUseCase = movieRecordUseCase
     }
     
@@ -34,7 +37,7 @@ final class DefaultMovieRecordViewModel: MovieRecordViewModel {
                 self?.isSuccess = isSuccess
                 
             case .failure(let error):
-                self?.error = error
+                self?.error.send(error)
                 
             }
         }
@@ -47,7 +50,7 @@ final class DefaultMovieRecordViewModel: MovieRecordViewModel {
                 self?.isSuccess = isSuccess
                 
             case .failure(let error):
-                self?.error = error
+                self?.error.send(error)
                 
             }
         }
@@ -60,7 +63,7 @@ final class DefaultMovieRecordViewModel: MovieRecordViewModel {
                 self?.isSuccess = isSuccess
                 
             case .failure(let error):
-                self?.error = error
+                self?.error.send(error)
                 
             }
         }
@@ -74,7 +77,7 @@ final class DefaultMovieRecordViewModel: MovieRecordViewModel {
                     return
                     
                 case .failure(let error):
-                    self.error = error
+                    self.error.send(error)
                     
                 }
             })
@@ -88,7 +91,7 @@ final class DefaultMovieRecordViewModel: MovieRecordViewModel {
                 return
                 
             case .failure(let error):
-                self?.error = error
+                self?.error.send(error)
                 
             }
         }
