@@ -29,6 +29,7 @@
 		A9749BE029C756CE002E0DD4 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9749BDF29C756CE002E0DD4 /* PreviewView.swift */; };
 		A9749BE229C756D5002E0DD4 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9749BE129C756D5002E0DD4 /* RecordButton.swift */; };
 		A9749BE429C7578C002E0DD4 /* MovieRecordViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A9749BE329C7578C002E0DD4 /* MovieRecordViewController.storyboard */; };
+		A9BFE20B29DDAED600A07052 /* PhotoLibrarian.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BFE20A29DDAED600A07052 /* PhotoLibrarian.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +57,7 @@
 		A9749BDF29C756CE002E0DD4 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		A9749BE129C756D5002E0DD4 /* RecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
 		A9749BE329C7578C002E0DD4 /* MovieRecordViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MovieRecordViewController.storyboard; sourceTree = "<group>"; };
+		A9BFE20A29DDAED600A07052 /* PhotoLibrarian.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibrarian.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +152,7 @@
 		A9749BB629C75410002E0DD4 /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
+				A9BFE20929DDAEC700A07052 /* PhotoLibrarian */,
 				A93CB96429C9E2C800481A99 /* MovieWriter */,
 				A93CB96129C9DE0500481A99 /* DeviceProvider */,
 			);
@@ -251,6 +254,14 @@
 			path = MovieRecordView;
 			sourceTree = "<group>";
 		};
+		A9BFE20929DDAEC700A07052 /* PhotoLibrarian */ = {
+			isa = PBXGroup;
+			children = (
+				A9BFE20A29DDAED600A07052 /* PhotoLibrarian.swift */,
+			);
+			path = PhotoLibrarian;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -323,6 +334,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9749BD429C75620002E0DD4 /* DefaultMovieRecordRepository.swift in Sources */,
+				A9BFE20B29DDAED600A07052 /* PhotoLibrarian.swift in Sources */,
 				A9749BD629C75669002E0DD4 /* MovieRecordRepository.swift in Sources */,
 				A9749BD029C755CF002E0DD4 /* AppConfiguration.swift in Sources */,
 				A9749BCE29C755C7002E0DD4 /* AppFlowCoordinator.swift in Sources */,

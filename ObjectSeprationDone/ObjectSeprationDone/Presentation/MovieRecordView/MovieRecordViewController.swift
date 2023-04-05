@@ -12,6 +12,7 @@ import Combine
 
 enum AuthorizationError: String, Error {
     case cameraNotAuthorized = "Camera authorization"
+    case photoLibraryNotAuthorized = "Photo library authorization"
 }
 
 final class MovieRecordViewController: UIViewController {
@@ -32,13 +33,13 @@ final class MovieRecordViewController: UIViewController {
         super.viewDidLoad()
         checkDeviceAuthorization()
         subscribeError()
-        requestForPhotoAlbumAccess { isSuccess in
+        viewModel.requestPhotoAuthorization { [weak self] isSuccess in
             switch isSuccess {
             case true:
                 return
                 
             case false:
-                print("False")
+                self?.presentAlert(of: AuthorizationError.photoLibraryNotAuthorized)
                 
             }
         }

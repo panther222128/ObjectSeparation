@@ -16,6 +16,7 @@ protocol MovieRecordViewModel {
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue)
     func didStartMovieRecord(on dataOutputQueue: DispatchQueue)
     func didStopMovieRecord(from dataOutputQueue: DispatchQueue)
+    func requestPhotoAuthorization(completion: @escaping (Bool) -> Void)
 }
 
 final class DefaultMovieRecordViewModel: MovieRecordViewModel {
@@ -92,6 +93,19 @@ final class DefaultMovieRecordViewModel: MovieRecordViewModel {
                 
             case .failure(let error):
                 self?.error.send(error)
+                
+            }
+        }
+    }
+    
+    func requestPhotoAuthorization(completion: @escaping (Bool) -> Void) {
+        movieRecordUseCase.executeRequestPhotoAuthorization { isSuccess in
+            switch isSuccess {
+            case true:
+                completion(isSuccess)
+                
+            case false:
+                completion(isSuccess)
                 
             }
         }

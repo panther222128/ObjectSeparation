@@ -13,4 +13,5 @@ protocol MovieRecordRepository {
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func startMovieRecord(on dataOutputQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func stopMovieRecord(from dataOutPutQueue: DispatchQueue, completion: @escaping (Result<URL, Error>) -> Void)
+    func requestForPhotoAlbumAccess(completion: @escaping (Bool) -> Void)
 }

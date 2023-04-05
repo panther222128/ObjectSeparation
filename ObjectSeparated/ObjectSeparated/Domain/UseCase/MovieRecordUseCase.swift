@@ -13,6 +13,7 @@ protocol MovieRecordUseCase {
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func executeMovieRecord(on dataOutputQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func executeStopMovieRecord(from dataOutputQueue: DispatchQueue, completion: @escaping (Result<URL, Error>) -> Void)
+    func executeRequestPhotoAuthorization(completion: @escaping (Bool) -> Void)
 }
 
 final class DefaultMovieRecordUseCase: MovieRecordUseCase {
@@ -79,6 +80,19 @@ final class DefaultMovieRecordUseCase: MovieRecordUseCase {
                 
             case .failure(let error):
                 completion(.failure(error))
+                
+            }
+        }
+    }
+    
+    func executeRequestPhotoAuthorization(completion: @escaping (Bool) -> Void) {
+        movieRecordRepository.requestForPhotoAlbumAccess { isSuccess in
+            switch isSuccess {
+            case true:
+                completion(isSuccess)
+                
+            case false:
+                completion(isSuccess)
                 
             }
         }

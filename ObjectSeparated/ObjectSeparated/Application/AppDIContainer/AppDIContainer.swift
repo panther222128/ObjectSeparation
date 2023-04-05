@@ -19,8 +19,12 @@ final class AppDIContainer {
         return DefaultMovieWriter()
     }()
     
+    lazy var photoLibrarian: PhotoLibrarian = {
+        return DefaultPhotoLibrarian()
+    }()
+    
     func makeSceneDIContainer() -> SceneDIContainer {
-        let dependencies = SceneDIContainer.Dependencies(deviceProvider: deviceProvider, movieWriter: movieWriter)
+        let dependencies = SceneDIContainer.Dependencies(deviceProvider: deviceProvider, movieWriter: movieWriter, photoLibrarian: photoLibrarian)
         return SceneDIContainer(dependencies: dependencies)
     }
     

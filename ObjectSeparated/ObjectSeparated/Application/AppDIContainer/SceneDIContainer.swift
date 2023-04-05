@@ -12,6 +12,7 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
     struct Dependencies {
         let deviceProvider: DeviceProvidable
         let movieWriter: MovieWriter
+        let photoLibrarian: PhotoLibrarian
     }
     
     private let dependencies: Dependencies
@@ -29,7 +30,7 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
     }
     
     func makeStudio() -> StudioConfigurable {
-        return DefaultStudio(deviceProvider: dependencies.deviceProvider, movieWriter: dependencies.movieWriter)
+        return DefaultStudio(deviceProvider: dependencies.deviceProvider, movieWriter: dependencies.movieWriter, photoLibrarian: dependencies.photoLibrarian)
     }
     
     func makeMovieRecordRepository() -> MovieRecordRepository {

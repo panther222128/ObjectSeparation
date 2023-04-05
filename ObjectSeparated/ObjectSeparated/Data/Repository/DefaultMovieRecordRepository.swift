@@ -76,4 +76,17 @@ final class DefaultMovieRecordRepository: MovieRecordRepository {
         }
     }
     
+    func requestForPhotoAlbumAccess(completion: @escaping (Bool) -> Void) {
+        studio.requestForPhotoAlbumAccess { isSuccess in
+            switch isSuccess {
+            case true:
+                completion(isSuccess)
+                
+            case false:
+                completion(isSuccess)
+                
+            }
+        }
+    }
+    
 }

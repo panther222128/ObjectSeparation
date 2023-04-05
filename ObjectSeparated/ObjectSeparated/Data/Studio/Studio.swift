@@ -38,20 +38,23 @@ protocol StudioConfigurable {
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func startRecording(on dataOutputQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func stopRecording(from dataOutputQueue: DispatchQueue, completion: @escaping (Result<URL, Error>) -> Void)
+    func requestForPhotoAlbumAccess(completion: @escaping (Bool) -> Void)
 }
 
 final class DefaultStudio: NSObject, StudioConfigurable {
     
     private let deviceProvider: DeviceProvidable
     private let movieWriter: MovieWriter
+    private let photoLibrarian: PhotoLibrarian
     private var captureSession: AVCaptureSession?
     private var videoDataOutput: AVCaptureVideoDataOutput?
     private var audioDataOutput: AVCaptureAudioDataOutput?
     private var videoPixelFormat: [String: Any]?
     
-    init(deviceProvider: DeviceProvidable, movieWriter: MovieWriter) {
+    init(deviceProvider: DeviceProvidable, movieWriter: MovieWriter, photoLibrarian: PhotoLibrarian) {
         self.deviceProvider = deviceProvider
         self.movieWriter = movieWriter
+        self.photoLibrarian = photoLibrarian
         self.captureSession = nil
         self.videoDataOutput = nil
         self.audioDataOutput = nil
@@ -126,7 +129,7 @@ final class DefaultStudio: NSObject, StudioConfigurable {
         dataOutputQueue.async {
             do {
                 try self.movieWriter.stopRecord { [weak self] url in
-                    self?.saveMovieToPhotoLibrary(url) { result in
+                    self?.photoLibrarian.saveMovieToPhotoLibrary(url, completion: { result in
                         switch result {
                         case .success(let url):
                             completion(.success(url))
@@ -135,10 +138,23 @@ final class DefaultStudio: NSObject, StudioConfigurable {
                             completion(.failure(error))
                             
                         }
-                    }
+                    })
                 }
             } catch let error {
                 completion(.failure(error))
+            }
+        }
+    }
+    
+    func requestForPhotoAlbumAccess(completion: @escaping (Bool) -> Void) {
+        photoLibrarian.requestForPhotoAlbumAccess { isSuccess in
+            switch isSuccess {
+            case true:
+                completion(isSuccess)
+                
+            case false:
+                completion(isSuccess)
+                
             }
         }
     }
@@ -306,35 +322,3 @@ extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptur
         return sampleBuffer
     }
 }
-
-// MARK: Save
-extension DefaultStudio {
-    private func saveMovieToPhotoLibrary(_ movieURL: URL, completion: @escaping (Result<URL, Error>) -> Void) {
-        PHPhotoLibrary.requestAuthorization { status in
-            if status == .authorized {
-                PHPhotoLibrary.shared().performChanges({
-                    let options = PHAssetResourceCreationOptions()
-                    options.shouldMoveFile = true
-                    let creationRequest = PHAssetCreationRequest.forAsset()
-                    creationRequest.addResource(with: .video, fileURL: movieURL, options: options)
-                }, completionHandler: { success, error in
-                    if let error = error {
-                        completion(.failure(error))
-                    } else {
-                        if FileManager.default.fileExists(atPath: movieURL.path) {
-                            do {
-                                try FileManager.default.removeItem(atPath: movieURL.path)
-                            } catch {
-                                completion(.failure(PhotoLibraryError.cannotCleanUpMovieFile))
-                            }
-                        }
-                        completion(.success(movieURL))
-                    }
-                })
-            } else {
-                completion(.failure(PhotoLibraryError.notAuthorized))
-            }
-        }
-    }
-}
-

@@ -30,6 +30,7 @@
 		A98D245729CB46FE0076319F /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D245629CB46FE0076319F /* RecordButton.swift */; };
 		A98D245929CB48710076319F /* AppFlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D245829CB48710076319F /* AppFlowCoordinator.swift */; };
 		A98D245B29CB48810076319F /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98D245A29CB48810076319F /* AppConfiguration.swift */; };
+		A9BFE20E29DDB24A00A07052 /* PhotoLibrarian.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BFE20D29DDB24A00A07052 /* PhotoLibrarian.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,7 @@
 		A98D245629CB46FE0076319F /* RecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
 		A98D245829CB48710076319F /* AppFlowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlowCoordinator.swift; sourceTree = "<group>"; };
 		A98D245A29CB48810076319F /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
+		A9BFE20D29DDB24A00A07052 /* PhotoLibrarian.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibrarian.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +134,7 @@
 		A98D242929CB43EF0076319F /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
+				A9BFE20C29DDB23B00A07052 /* PhotoLibrarian */,
 				A98D243E29CB45B70076319F /* MovieWriter */,
 				A98D243F29CB45BD0076319F /* DeviceProvider */,
 			);
@@ -254,6 +257,14 @@
 			path = Interfaces;
 			sourceTree = "<group>";
 		};
+		A9BFE20C29DDB23B00A07052 /* PhotoLibrarian */ = {
+			isa = PBXGroup;
+			children = (
+				A9BFE20D29DDB24A00A07052 /* PhotoLibrarian.swift */,
+			);
+			path = PhotoLibrarian;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -325,6 +336,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9BFE20E29DDB24A00A07052 /* PhotoLibrarian.swift in Sources */,
 				A98D241329CB43B40076319F /* AppDelegate.swift in Sources */,
 				A98D244129CB45CD0076319F /* MovieWriter.swift in Sources */,
 				A96200AA29CC880D0086BE04 /* MicrophoneProvider.swift in Sources */,
