@@ -32,11 +32,11 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
     }
     
     func makeMovieRecordRepository() -> MovieRecordRepository {
-        return DefaultMovieRecordRepository(studio: makeStudio())
+        return DefaultMovieRecordRepository()
     }
     
     func makeMovieRecordUseCase() -> MovieRecordUseCase {
-        return DefaultMovieRecordUseCase(movieRecordRepository: makeMovieRecordRepository())
+        return DefaultMovieRecordUseCase(movieRecordRepository: makeMovieRecordRepository(), studio: makeStudio())
     }
     
     func makeMovieRecordViewModel() -> MovieRecordViewModel {
