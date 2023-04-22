@@ -61,10 +61,12 @@ final class MovieRecordViewController: UIViewController {
     }
     
     private func presentAlert(of error: Error) {
-        let alert = UIAlertController(title: Constants.AlertMessages.errorTitle, message: "\(error)", preferredStyle: UIAlertController.Style.alert)
-        let addAlertAction = UIAlertAction(title: Constants.AlertMessages.ok, style: .default)
-        alert.addAction(addAlertAction)
-        self.present(alert, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: Constants.AlertMessages.errorTitle, message: "\(error)", preferredStyle: UIAlertController.Style.alert)
+            let addAlertAction = UIAlertAction(title: Constants.AlertMessages.ok, style: .default)
+            alert.addAction(addAlertAction)
+            self.present(alert, animated: true, completion: nil)
+        }
     }
     
     private func checkDeviceAuthorization() {
