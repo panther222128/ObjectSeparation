@@ -9,6 +9,7 @@ import AVFoundation
 
 protocol MovieRecordUseCase {
     func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void)
+    func runSession(on sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func executeMovieRecord(on dataOutputQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
@@ -27,77 +28,31 @@ final class DefaultMovieRecordUseCase: MovieRecordUseCase {
     }
     
     func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void) {
-        studio.startCaptureSession(on: sessionQueue, with: layer) { result in
-            switch result {
-            case .success(let isSuccess):
-                completion(.success(isSuccess))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        studio.startCaptureSession(on: sessionQueue, with: layer, completion: completion)
+    }
+    
+    func runSession(on sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
+        studio.runCaptureSession(on: sessionQueue, completion: completion)
     }
     
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
-        studio.configureCamera(with: dataOutputQueue, videoPreviewLayer: videoPreviewLayer, sessionQueue: sessionQueue) { result in
-            switch result {
-            case .success(let isSuccess):
-                completion(.success(isSuccess))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        studio.configureCamera(with: dataOutputQueue, videoPreviewLayer: videoPreviewLayer, sessionQueue: sessionQueue, completion: completion)
     }
     
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
-        studio.configureMicrophone(with: dataOutputQueue, sessionQueue: sessionQueue) { result in
-            switch result {
-            case .success(let isSuccess):
-                completion(.success(isSuccess))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        studio.configureMicrophone(with: dataOutputQueue, sessionQueue: sessionQueue, completion: completion)
     }
     
     func executeMovieRecord(on dataOutputQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
-        do {
-            studio.startRecording(on: dataOutputQueue, completion: { result in
-                switch result {
-                case .success(let isSuccess):
-                    completion(.success(isSuccess))
-                    
-                case .failure(let error):
-                    completion(.failure(error))
-                    
-                }
-            })
-        }
+        studio.startRecording(on: dataOutputQueue, completion: completion)
     }
     
     func executeStopMovieRecord(from dataOutPutQueue: DispatchQueue, completion: @escaping (Result<URL, Error>) -> Void) {
-        studio.stopRecording(from: dataOutPutQueue) { result in
-            switch result {
-            case .success(let isSuccess):
-                completion(.success(isSuccess))
-                
-            case .failure(let error):
-                completion(.failure(error))
-                
-            }
-        }
+        studio.stopRecording(from: dataOutPutQueue, completion: completion)
     }
     
     func executeRequestPhotoAuthorization(completion: @escaping (Bool) -> Void) {
-        studio.requestForPhotoAlbumAccess { isSuccess in
-            switch isSuccess {
-            case true:
-                completion(isSuccess)
-                
-            case false:
-                completion(isSuccess)
-                
-            }
-        }
+        studio.requestForPhotoAlbumAccess(completion: completion)
     }
     
 }

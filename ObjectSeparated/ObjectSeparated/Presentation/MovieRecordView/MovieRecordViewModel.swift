@@ -12,6 +12,7 @@ protocol MovieRecordViewModel {
     var error: PassthroughSubject<Error, Never> { get }
     
     func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer)
+    func runSession(on sessionQueue: DispatchQueue)
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue)
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue)
     func didStartMovieRecord(on dataOutputQueue: DispatchQueue)
@@ -33,6 +34,19 @@ final class DefaultMovieRecordViewModel: MovieRecordViewModel {
     
     func startSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer) {
         movieRecordUseCase.startSession(on: sessionQueue, with: layer) { [weak self] result in
+            switch result {
+            case .success(let isSuccess):
+                self?.isSuccess = isSuccess
+                
+            case .failure(let error):
+                self?.error.send(error)
+                
+            }
+        }
+    }
+    
+    func runSession(on sessionQueue: DispatchQueue) {
+        movieRecordUseCase.runSession(on: sessionQueue) { [weak self] result in
             switch result {
             case .success(let isSuccess):
                 self?.isSuccess = isSuccess

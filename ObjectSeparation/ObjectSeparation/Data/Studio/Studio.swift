@@ -53,6 +53,7 @@ enum PhotoLibraryError: Error {
 
 protocol StudioConfigurable {
     func startCaptureSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void)
+    func runCaptureSession(on sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func startRecording(on dataOutputQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
@@ -106,9 +107,22 @@ final class DefaultStudio: NSObject, StudioConfigurable {
         }
     }
     
+    func runCaptureSession(on sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
+        sessionQueue.async {
+            guard let captureSession = self.captureSession else {
+                completion(.failure(StudioError.captureSessionInstantiate))
+                return
+            }
+            captureSession.startRunning()
+        }
+    }
+    
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
         sessionQueue.async {
-            guard let captureSession = self.captureSession else { return }
+            guard let captureSession = self.captureSession else {
+                completion(.failure(StudioError.captureSessionInstantiate))
+                return
+            }
             captureSession.beginConfiguration()
             defer {
                 captureSession.commitConfiguration()
@@ -129,7 +143,10 @@ final class DefaultStudio: NSObject, StudioConfigurable {
     
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
         sessionQueue.async {
-            guard let captureSession = self.captureSession else { return }
+            guard let captureSession = self.captureSession else {
+                completion(.failure(StudioError.captureSessionInstantiate))
+                return
+            }
             captureSession.beginConfiguration()
             defer {
                 captureSession.commitConfiguration()

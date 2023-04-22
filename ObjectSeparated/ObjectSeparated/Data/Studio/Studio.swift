@@ -34,6 +34,7 @@ enum PhotoLibraryError: Error {
 
 protocol StudioConfigurable {
     func startCaptureSession(on sessionQueue: DispatchQueue, with layer: AVCaptureVideoPreviewLayer, completion: @escaping (Result<Bool, Error>) -> Void)
+    func runCaptureSession(on sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
     func startRecording(on dataOutputQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void)
@@ -73,9 +74,22 @@ final class DefaultStudio: NSObject, StudioConfigurable {
         }
     }
     
+    func runCaptureSession(on sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
+        sessionQueue.async {
+            guard let captureSession = self.captureSession else {
+                completion(.failure(StudioError.captureSessionInstantiate))
+                return
+            }
+            captureSession.startRunning()
+        }
+    }
+    
     func configureCamera(with dataOutputQueue: DispatchQueue, videoPreviewLayer: AVCaptureVideoPreviewLayer, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
         sessionQueue.async {
-            guard let captureSession = self.captureSession else { return }
+            guard let captureSession = self.captureSession else {
+                completion(.failure(StudioError.captureSessionInstantiate))
+                return
+            }
             captureSession.beginConfiguration()
             defer {
                 captureSession.commitConfiguration()
@@ -95,7 +109,10 @@ final class DefaultStudio: NSObject, StudioConfigurable {
     
     func configureMicrophone(with dataOutputQueue: DispatchQueue, sessionQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
         sessionQueue.async {
-            guard let captureSession = self.captureSession else { return }
+            guard let captureSession = self.captureSession else {
+                completion(.failure(StudioError.captureSessionInstantiate))
+                return
+            }
             captureSession.beginConfiguration()
             defer {
                 captureSession.commitConfiguration()
@@ -115,8 +132,14 @@ final class DefaultStudio: NSObject, StudioConfigurable {
     func startRecording(on dataOutputQueue: DispatchQueue, completion: @escaping (Result<Bool, Error>) -> Void) {
         dataOutputQueue.async {
             do {
-                guard let videoDataOutput = self.videoDataOutput else { return }
-                guard let audioDataOutput = self.audioDataOutput else { return }
+                guard let videoDataOutput = self.videoDataOutput else {
+                    completion(.failure(StudioError.cannotFindVideoDataOutput))
+                    return
+                }
+                guard let audioDataOutput = self.audioDataOutput else {
+                    completion(.failure(StudioError.cannotFindAudioDataOutput))
+                    return
+                }
                 try self.movieWriter.startMovieRecord(with: videoDataOutput, audioDataOutput)
                 completion(.success(true))
             } catch let error {
@@ -294,12 +317,10 @@ extension DefaultStudio: AVCaptureVideoDataOutputSampleBufferDelegate & AVCaptur
             print("Error: Unable to create sample buffer from pixelbuffer")
             return
         }
-        guard videoDataOutput == videoDataOutput else { return }
         movieWriter.recordVideo(sampleBuffer: videoSampleBuffer)
     }
 
     private func processsAudio(_ sampleBuffer: CMSampleBuffer, from audioDataOutput: AVCaptureAudioDataOutput) {
-        guard audioDataOutput == audioDataOutput else { return }
         movieWriter.recordAudio(sampleBuffer: sampleBuffer)
     }
     

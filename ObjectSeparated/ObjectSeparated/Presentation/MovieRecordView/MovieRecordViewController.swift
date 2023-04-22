@@ -27,11 +27,14 @@ final class MovieRecordViewController: UIViewController {
     private let sessionQueue: DispatchQueue = DispatchQueue(label: "SessionQueue")
     private var cancellables: Set<AnyCancellable> = []
     
+    private weak var videoPreviewLayer: AVCaptureVideoPreviewLayer?
+    
     private var viewModel: MovieRecordViewModel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        checkDeviceAuthorization()
+        videoPreviewLayer = videoPreviewView.videoPreviewLayer
+        viewModel.startSession(on:sessionQueue, with: videoPreviewLayer ?? .init())
         subscribeError()
         viewModel.requestPhotoAuthorization { [weak self] isSuccess in
             switch isSuccess {
@@ -43,6 +46,11 @@ final class MovieRecordViewController: UIViewController {
                 
             }
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        checkDeviceAuthorization()
     }
     
     static func create(with viewModel: MovieRecordViewModel) -> MovieRecordViewController {
@@ -72,11 +80,9 @@ final class MovieRecordViewController: UIViewController {
     private func checkDeviceAuthorization() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
-            DispatchQueue.main.async {
-                self.viewModel.startSession(on: self.sessionQueue, with: self.videoPreviewView.videoPreviewLayer)
-                self.viewModel.configureCamera(with: self.dataOutputQueue, videoPreviewLayer: self.videoPreviewView.videoPreviewLayer, sessionQueue: self.sessionQueue)
-                self.viewModel.configureMicrophone(with: self.dataOutputQueue, sessionQueue: self.sessionQueue)
-            }
+            self.viewModel.configureCamera(with: self.dataOutputQueue, videoPreviewLayer: self.videoPreviewLayer ?? .init(), sessionQueue: self.sessionQueue)
+            self.viewModel.configureMicrophone(with: self.dataOutputQueue, sessionQueue: self.sessionQueue)
+            self.viewModel.runSession(on: sessionQueue)
             
         case .denied:
             presentAlert(of: AuthorizationError.cameraNotAuthorized)
@@ -86,11 +92,9 @@ final class MovieRecordViewController: UIViewController {
                 if isAuthorized {
                     guard let dataOutputQueue = self?.dataOutputQueue else { return }
                     guard let sessionQueue = self?.sessionQueue else { return }
-                    DispatchQueue.main.async {
-                        self?.viewModel.startSession(on: sessionQueue, with: self?.videoPreviewView.videoPreviewLayer ?? AVCaptureVideoPreviewLayer())
-                        self?.viewModel.configureCamera(with: dataOutputQueue, videoPreviewLayer: self?.videoPreviewView.videoPreviewLayer ?? AVCaptureVideoPreviewLayer(), sessionQueue: sessionQueue)
-                        self?.viewModel.configureMicrophone(with: dataOutputQueue, sessionQueue: sessionQueue)
-                    }
+                    self?.viewModel.configureCamera(with: dataOutputQueue, videoPreviewLayer: self?.videoPreviewLayer ?? .init(), sessionQueue: sessionQueue)
+                    self?.viewModel.configureMicrophone(with: dataOutputQueue, sessionQueue: sessionQueue)
+                    self?.viewModel.runSession(on: sessionQueue)
                 } else {
                     self?.presentAlert(of: AuthorizationError.cameraNotAuthorized)
                 }
