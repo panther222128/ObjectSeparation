@@ -83,6 +83,7 @@ final class DefaultStudio: NSObject, StudioConfigurable {
                 return
             }
             captureSession.startRunning()
+            completion(.success(true))
         }
     }
     
